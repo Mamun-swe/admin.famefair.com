@@ -1,0 +1,26 @@
+.vendor-show-container {
+    table {
+        tbody {
+            tr {
+                td {
+                    color: rgba(0, 0, 0, 0.671);
+                    font-size: 13px;
+                    text-transform: capitalize;
+                    margin-bottom: 5px;
+                }
+
+                .title-td {
+                    min-width: 110px;
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+
+    p {
+        color: rgba(0, 0, 0, 0.671);
+        font-size: 13px;
+        text-transform: capitalize;
+        margin-bottom: 5px;
+    }
+}
