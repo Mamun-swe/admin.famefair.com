@@ -10,7 +10,7 @@ export const OrderChart = () => {
 
     const options = {
         chart: {
-            height: 400,
+            height: 450,
             type: 'area'
         },
         dataLabels: {
@@ -46,7 +46,7 @@ export const OrderChart = () => {
 
     return (
         <div>
-            <ReactApexCharts options={options} series={series} type="area" height={350} />
+            <ReactApexCharts options={options} series={series} type="area" height={450} />
         </div>
     );
 };
@@ -54,26 +54,56 @@ export const OrderChart = () => {
 
 // Order Status 
 export const OrderStatusChart = () => {
-    const series = [44, 55, 13, 43, 22]
+    const series = [100, 100, 100, 105, 100, 90]
 
     const options = {
         chart: {
             width: 550,
-            type: 'donut',
+            type: 'polarArea'
         },
-        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-        legend: {
-            position: 'bottom'
-        },
+        labels: ['Created', 'Pending', 'Approved', 'Cancled', 'Paid', 'Non-Paid'],
         title: {
             text: 'Order Status',
-            align: 'left'
+            align: 'center'
+        },
+        fill: {
+            opacity: 1
+        },
+        stroke: {
+            width: 1,
+            colors: undefined
+        },
+        yaxis: {
+            show: false
+        },
+        legend: {
+            position: 'right'
+        },
+        plotOptions: {
+            polarArea: {
+                rings: {
+                    strokeWidth: 0
+                },
+                spokes: {
+                    strokeWidth: 0
+                },
+            }
+        },
+        theme: {
+            monochrome: {
+                enabled: true,
+                shadeTo: 'light',
+                shadeIntensity: 0.6
+            }
         },
         responsive: [{
             breakpoint: 480,
             options: {
                 chart: {
-                    width: 350
+                    width: 300
+                },
+                legend: {
+                    position: 'bottom'
                 }
             }
         }]
@@ -81,7 +111,7 @@ export const OrderStatusChart = () => {
 
     return (
         <div>
-            <ReactApexCharts options={options} series={series} type="donut" width={350} />
+            <ReactApexCharts options={options} series={series} type="polarArea" width={350} />
         </div>
     );
 };
