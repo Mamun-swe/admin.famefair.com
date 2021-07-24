@@ -7,8 +7,8 @@ import {
     PrimaryButton
 } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
-import { SingleSelect } from '../../components/select/Single'
-import { FileUploader } from '../../components/fileUploader/Index'
+import { SingleSelect } from '../../components/select/Index'
+import { FileUploader } from '../../components/fileUploader/Single'
 import { Loader } from '../../components/loader/Index'
 import { OptionMaker } from '../../utils/_heplers'
 import Requests from '../../utils/Requests/Index'

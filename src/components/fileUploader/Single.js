@@ -48,7 +48,12 @@ export const FileUploader = (props) => {
                             className="image-plus border"
                             style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}
                         >
-                            <input type="file" className="upload" onChange={handleImage} />
+                            <input
+                                type="file"
+                                accept=".jpg, .png, .jpeg"
+                                className="upload"
+                                onChange={handleImage}
+                            />
                             <div className="flex-center flex-column">
                                 <Plus size={22} />
                             </div>

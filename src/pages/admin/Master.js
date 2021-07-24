@@ -30,6 +30,9 @@ import CategoryEdit from '../category/Edit'
 
 // --- Product ---
 import ProductIndex from '../product/Index'
+import ProductStore from '../product/Create'
+import ProductEdit from '../product/Edit'
+import ProductShow from '../product/Show'
 
 // --- Order ---
 import OrderIndex from '../order/Index'
@@ -72,6 +75,9 @@ const Master = () => {
 
                     {/* --- Product --- */}
                     <Route exact path="/dashboard/product" component={ProductIndex} />
+                    <Route exact path="/dashboard/product/store" component={ProductStore} />
+                    <Route exact path="/dashboard/product/edit/:id" component={ProductEdit} />
+                    <Route exact path="/dashboard/product/show/:id" component={ProductShow} />
 
                     {/* --- Order --- */}
                     <Route exact path="/dashboard/order" component={OrderIndex} />

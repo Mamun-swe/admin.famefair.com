@@ -8,7 +8,7 @@ import {
     PrimaryButton
 } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
-import { FileUploader } from '../../components/fileUploader/Index'
+import { FileUploader } from '../../components/fileUploader/Single'
 
 const Create = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
