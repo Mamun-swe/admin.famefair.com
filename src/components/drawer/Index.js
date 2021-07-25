@@ -130,7 +130,7 @@ const Index = (props) => {
         {
             title: "Admin List",
             icon: <UserCheck size={18} />,
-            path: "/dashboard/messaging"
+            path: "/dashboard/admin"
         },
         {
             title: "Customer",
@@ -139,12 +139,12 @@ const Index = (props) => {
                 {
                     title: "New Customer",
                     icon: <UserPlus size={18} />,
-                    path: "/dashboard/inventory/product/list"
+                    path: "/dashboard/customer/store"
                 },
                 {
                     title: "All Customer",
                     icon: <List size={18} />,
-                    path: "/dashboard/inventory/product/list"
+                    path: "/dashboard/customer"
                 }
             ]
         },

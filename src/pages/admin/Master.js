@@ -37,6 +37,15 @@ import ProductShow from '../product/Show'
 // --- Order ---
 import OrderIndex from '../order/Index'
 
+// --- Admin ---
+import AdminIndex from '../admins/Index'
+import AdminStore from '../admins/Create'
+import AdminEdit from '../admins/Edit'
+
+// --- Customer ---
+import CustomerIndex from '../customer/Index'
+import CustomerStore from '../customer/Create'
+
 import FourOFour from '../fourOfour/Index'
 
 const Master = () => {
@@ -81,6 +90,15 @@ const Master = () => {
 
                     {/* --- Order --- */}
                     <Route exact path="/dashboard/order" component={OrderIndex} />
+
+                    {/* --- Admin --- */}
+                    <Route exact path="/dashboard/admin" component={AdminIndex} />
+                    <Route exact path="/dashboard/admin/store" component={AdminStore} />
+                    <Route exact path="/dashboard/admin/edit/:id" component={AdminEdit} />
+
+                    {/* --- Customer --- */}
+                    <Route exact path="/dashboard/customer" component={CustomerIndex} />
+                    <Route exact path="/dashboard/customer/store" component={CustomerStore} />
 
 
                     <Route path="*">
