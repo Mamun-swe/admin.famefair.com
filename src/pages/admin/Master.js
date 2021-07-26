@@ -45,6 +45,7 @@ import AdminEdit from '../admins/Edit'
 // --- Customer ---
 import CustomerIndex from '../customer/Index'
 import CustomerStore from '../customer/Create'
+import CustomerShow from '../customer/Show'
 
 import FourOFour from '../fourOfour/Index'
 
@@ -99,6 +100,7 @@ const Master = () => {
                     {/* --- Customer --- */}
                     <Route exact path="/dashboard/customer" component={CustomerIndex} />
                     <Route exact path="/dashboard/customer/store" component={CustomerStore} />
+                    <Route exact path="/dashboard/customer/show/:id" component={CustomerShow} />
 
 
                     <Route path="*">

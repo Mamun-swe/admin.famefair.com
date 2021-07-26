@@ -11,6 +11,7 @@ const Index = () => {
     const history = useHistory()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
+    const [searching, setSearching] = useState(false)
     const [totalRows, setTotalRows] = useState(0)
     const [perPage, setPerPage] = useState(10)
     const [header] = useState({
@@ -89,6 +90,16 @@ const Index = () => {
         },
     ]
 
+    // Handle search
+    const handleSearch = async query => {
+        setSearching(true)
+        console.log(query)
+
+        setTimeout(() => {
+            setSearching(false)
+        }, 2000);
+    }
+
     return (
         <div>
             <Layout
@@ -116,6 +127,9 @@ const Index = () => {
                         totalRows={totalRows}
                         handlePerRowsChange={handlePerRowsChange}
                         handlePageChange={handlePageChange}
+                        searchable
+                        search={handleSearch}
+                        searching={searching}
                     />
                 </div>
             </Main>
