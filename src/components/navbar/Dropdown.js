@@ -41,12 +41,12 @@ const DropdownComponent = () => {
             </Dropdown.Header>
 
             <div className="dropdown-body">
-                <Dropdown.Item as={Link} to="/profile">
+                <Dropdown.Item as={Link} to="/dashboard/profile">
                     <Settings size={15} className="icon" />
                     <span>My Profile</span>
                 </Dropdown.Item>
 
-                <Dropdown.Item as={Link} to="/dashboard/profile">
+                <Dropdown.Item as={Link} to="/dashboard/change-password">
                     <Edit3 size={15} className="icon" />
                     <span>Edit Password</span>
                 </Dropdown.Item>

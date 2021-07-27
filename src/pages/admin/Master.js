@@ -46,6 +46,19 @@ import AdminEdit from '../admins/Edit'
 import CustomerIndex from '../customer/Index'
 import CustomerStore from '../customer/Create'
 import CustomerShow from '../customer/Show'
+import CustomerEdit from '../customer/Edit'
+
+// --- Reviews ---
+import ReviewIndex from '../reviews/Index'
+
+// --- Subscriber ---
+import SubscriberIndex from '../subscriber/Index'
+
+// --- Profile ---
+import ProfileIndex from '../profile/Index'
+
+// --- Change password ---
+import ChangePasswordIndex from '../changePassword/Index'
 
 import FourOFour from '../fourOfour/Index'
 
@@ -101,6 +114,19 @@ const Master = () => {
                     <Route exact path="/dashboard/customer" component={CustomerIndex} />
                     <Route exact path="/dashboard/customer/store" component={CustomerStore} />
                     <Route exact path="/dashboard/customer/show/:id" component={CustomerShow} />
+                    <Route exact path="/dashboard/customer/edit/:id" component={CustomerEdit} />
+
+                    {/* --- Rating & Reviews --- */}
+                    <Route exact path="/dashboard/reviews" component={ReviewIndex} />
+
+                    {/* --- Subscriber --- */}
+                    <Route exact path="/dashboard/subscriber" component={SubscriberIndex} />
+
+                    {/* --- Profile --- */}
+                    <Route exact path="/dashboard/profile" component={ProfileIndex} />
+
+                    {/* --- Change Password --- */}
+                    <Route exact path="/dashboard/change-password" component={ChangePasswordIndex} />
 
 
                     <Route path="*">

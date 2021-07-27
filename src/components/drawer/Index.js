@@ -2,12 +2,12 @@ import React from 'react'
 import './style.scss'
 import {
     PieChart,
-    BarChart2,
-    Settings,
+    // BarChart2,
+    // Settings,
     Users,
-    Tool,
-    DollarSign,
-    BarChart,
+    // Tool,
+    // DollarSign,
+    // BarChart,
     Mail,
     Image,
     Plus,
@@ -149,56 +149,56 @@ const Index = (props) => {
             ]
         },
         {
-            title: "Subscribers",
-            icon: <Mail size={18} />,
-            path: "/dashboard/product-return-replacement"
-        },
-        {
             title: "Rating & Reviews",
             icon: <Star size={18} />,
-            path: "/dashboard/sms"
+            path: "/dashboard/reviews"
         },
         {
-            title: "Reports",
-            icon: <BarChart2 size={18} />,
-            children: [
-                {
-                    title: "Customer Report",
-                    icon: <Users size={18} />,
-                    path: "/dashboard/reports/customers"
-                },
-                {
-                    title: "Purchase & Due",
-                    icon: <DollarSign size={18} />,
-                    path: "/dashboard/reports/purchase-due"
-                },
-                {
-                    title: "Revenue Report",
-                    icon: <BarChart size={18} />,
-                    path: "/dashboard/reports/revenue"
-                },
-                {
-                    title: "Sales Report",
-                    icon: <DollarSign size={18} />,
-                    path: "/dashboard/reports/sales"
-                },
-                {
-                    title: "Service Revenue Report",
-                    icon: <Tool size={18} />,
-                    path: "/dashboard/reports/service-revenue"
-                },
-                {
-                    title: "Stock Report",
-                    icon: <BarChart2 size={18} />,
-                    path: "/dashboard/reports/stock"
-                }
-            ]
+            title: "Subscribers",
+            icon: <Mail size={18} />,
+            path: "/dashboard/subscriber"
         },
-        {
-            title: "Settings",
-            icon: <Settings size={18} />,
-            path: "/dashboard/settings"
-        }
+        // {
+        //     title: "Reports",
+        //     icon: <BarChart2 size={18} />,
+        //     children: [
+        //         {
+        //             title: "Customer Report",
+        //             icon: <Users size={18} />,
+        //             path: "/dashboard/reports/customers"
+        //         },
+        //         {
+        //             title: "Purchase & Due",
+        //             icon: <DollarSign size={18} />,
+        //             path: "/dashboard/reports/purchase-due"
+        //         },
+        //         {
+        //             title: "Revenue Report",
+        //             icon: <BarChart size={18} />,
+        //             path: "/dashboard/reports/revenue"
+        //         },
+        //         {
+        //             title: "Sales Report",
+        //             icon: <DollarSign size={18} />,
+        //             path: "/dashboard/reports/sales"
+        //         },
+        //         {
+        //             title: "Service Revenue Report",
+        //             icon: <Tool size={18} />,
+        //             path: "/dashboard/reports/service-revenue"
+        //         },
+        //         {
+        //             title: "Stock Report",
+        //             icon: <BarChart2 size={18} />,
+        //             path: "/dashboard/reports/stock"
+        //         }
+        //     ]
+        // },
+        // {
+        //     title: "Settings",
+        //     icon: <Settings size={18} />,
+        //     path: "/dashboard/settings"
+        // }
     ]
 
     return (
