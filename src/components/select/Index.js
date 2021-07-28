@@ -1,5 +1,6 @@
 import React from 'react'
-import Select from 'react-select'
+import Select, { components } from 'react-select'
+import AsyncSelect from 'react-select/async'
 import CreatableSelect from 'react-select/creatable'
 
 const customStyles = {
@@ -74,3 +75,64 @@ export const Creatable = (props) => {
         </div>
     );
 };
+
+// Searcable select
+export const SearchableSelect = (props) => {
+    const { Option } = components
+    const styles = {
+        control: (provided, state) => ({
+            ...provided,
+            minHeight: 42,
+            fontSize: 14,
+            color: '#000',
+            background: '#fff',
+            boxShadow: 'none', '&:hover': { borderColor: '1px solid #ced4da' },
+            border: state.isFocused ? '1px solid #dfdfdf' : '1px solid #ced4da',
+            borderRadius: 25,
+            paddingLeft: 5,
+            paddingRight: 5
+        })
+    }
+
+    // Add image in each option
+    const Imageoption = (props) => (
+        <Option {...props}>
+            {props.data.image ? <img src={props.data.image} style={{ width: 30, height: 30, marginRight: 5 }} alt="..." /> : null}
+            {props.data.label}
+        </Option>
+    );
+
+    // Search from API
+    const searchOptions = (inputValue, callback) => {
+        props.search(inputValue).then(results => {
+            if (results) {
+                setTimeout(() => {
+                    callback(results)
+                }, 1000)
+            }
+        })
+    }
+
+    // Handle select
+    const handleSelect = event => props.values(event)
+
+    return (
+        <div>
+            <AsyncSelect
+                cacheOptions
+                styles={styles}
+                isMulti={props.isMulti}
+                onChange={handleSelect}
+                loadOptions={searchOptions}
+                placeholder={props.placeholder}
+                loadingMessage={() => 'Searching ...'}
+                noOptionsMessage={() => 'No results found !'}
+                components={{
+                    DropdownIndicator: () => null,
+                    IndicatorSeparator: () => null,
+                    Option: Imageoption
+                }}
+            />
+        </div>
+    )
+}

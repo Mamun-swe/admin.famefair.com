@@ -12,8 +12,20 @@ const Index = async (page, perPage, header) => {
     }
 }
 
+// Search with sku
+const SearchBySku = async (value, header) => {
+    let results
+    try {
+        const response = await Axios.get(`https://api.eazybest.com/api/v1/client/search/suggest/${value}`, header)
+        if (response.status === 200) results = response.data.results
+    } catch (error) { if (error) results = [] }
+
+    return results
+}
+
 const Product = {
-    Index
+    Index,
+    SearchBySku
 }
 
 export default Product

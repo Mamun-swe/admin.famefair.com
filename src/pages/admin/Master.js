@@ -36,6 +36,7 @@ import ProductShow from '../product/Show'
 
 // --- Order ---
 import OrderIndex from '../order/Index'
+import OrderStore from '../order/Create'
 
 // --- Admin ---
 import AdminIndex from '../admins/Index'
@@ -104,6 +105,7 @@ const Master = () => {
 
                     {/* --- Order --- */}
                     <Route exact path="/dashboard/order" component={OrderIndex} />
+                    <Route exact path="/dashboard/order/store" component={OrderStore} />
 
                     {/* --- Admin --- */}
                     <Route exact path="/dashboard/admin" component={AdminIndex} />
