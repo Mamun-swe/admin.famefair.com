@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom'
 import { PrimaryButton } from '../../components/button/Index'
 import { Images } from '../../utils/Images'
 
-const Index = (props) => {
+const Index = () => {
     return (
-        <div className="four-o-four" style={{ marginTop: props.mt ? props.mt : 0 }}>
+        <div className="four-o-four" style={{ marginTop: "-70px" }}>
             <div className="flex-center flex-column px-4">
                 <img src={Images.FourOFour} className="img-fluid" alt="Page not found" />
                 <p>What are you looking for ? Page not found !</p>

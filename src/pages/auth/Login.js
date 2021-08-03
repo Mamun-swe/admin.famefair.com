@@ -24,7 +24,11 @@ const Login = () => {
 
         setTimeout(() => {
             const token = Jwt.sign(
-                { email: data.email, role: "admin" }, "MYSECRET", { expiresIn: '10d' }
+                {
+                    email: data.email,
+                    role: "admin",
+                    permissions: ["profile", "dashboard", "banner", "category"]
+                }, "MYSECRET", { expiresIn: '10d' }
             )
 
             localStorage.setItem('token', token)

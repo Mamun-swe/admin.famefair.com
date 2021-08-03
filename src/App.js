@@ -8,7 +8,7 @@ import {
 
 import Login from './pages/auth/Login'
 import Reset from './pages/auth/Reset'
-import AdminMaster from './pages/admin/Master'
+import Master from './pages/master/Index'
 import FourOFour from './pages/fourOfour/Index'
 
 import ScrollToTop from './components/scrollTop/Index'
@@ -22,7 +22,7 @@ function App() {
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/reset" component={Reset} />
-            <RoleBaseRoute path="/dashboard" role="admin" component={AdminMaster} />
+            <RoleBaseRoute path="/dashboard" role="admin" component={Master} />
 
             <Route path="*" component={FourOFour} />
           </Switch>

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { PrimaryButton } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
 
-const Create = () => {
+const ChangePassword = () => {
     const { register, handleSubmit, setError, formState: { errors } } = useForm()
     const [isLoading, setLoading] = useState(false)
     const [header] = useState({
@@ -120,4 +120,4 @@ const Create = () => {
     );
 }
 
-export default Create;
+export default ChangePassword;

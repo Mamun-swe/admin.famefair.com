@@ -46,7 +46,7 @@ const DropdownComponent = () => {
                     <span>My Profile</span>
                 </Dropdown.Item>
 
-                <Dropdown.Item as={Link} to="/dashboard/change-password">
+                <Dropdown.Item as={Link} to="/dashboard/profile/change-password">
                     <Edit3 size={15} className="icon" />
                     <span>Edit Password</span>
                 </Dropdown.Item>
