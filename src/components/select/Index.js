@@ -45,7 +45,28 @@ export const SingleSelect = (props) => {
             />
         </div>
     );
-};
+}
+
+// Multi Select
+export const MultiSelect = (props) => {
+    const handleSelect = event => props.values(event)
+
+    return (
+        <div>
+            <Select
+                isMulti
+                ref={props.refs}
+                styles={props.error ? errorStyle : customStyles}
+                options={props.options || null}
+                onChange={handleSelect}
+                classNamePrefix="custom-select"
+                placeholder={`Select ${props.placeholder}`}
+                components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                defaultValue={props.deafult ? props.deafult.map(item => ({ value: item.value, label: item.label })) : null}
+            />
+        </div>
+    );
+}
 
 // Createable select
 export const Creatable = (props) => {
@@ -74,7 +95,7 @@ export const Creatable = (props) => {
             />
         </div>
     );
-};
+}
 
 // Searcable select
 export const SearchableSelect = (props) => {

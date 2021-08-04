@@ -33,7 +33,7 @@ const MenuItem = props => {
                     <div className="menu-icon">{props.icon}</div>
                     <div className="menu-title">{props.title}</div>
                     {props.child ?
-                        <div className="menu-arrow ml-auto">
+                        <div className="menu-arrow ms-auto">
                             <img
                                 src={arrow}
                                 width={14}

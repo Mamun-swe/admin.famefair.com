@@ -81,7 +81,7 @@ const Edit = () => {
                         />
 
 
-                        <div className="text-right">
+                        <div className="text-end">
                             <PrimaryButton
                                 type="submit"
                                 disabled={loading}

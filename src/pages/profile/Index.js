@@ -86,7 +86,7 @@ const Index = () => {
                                 </div>
                             </div>
 
-                            <div className="text-right text-lg-left">
+                            <div className="text-end text-lg-start">
                                 <SuccessButton
                                     type="button"
                                     className="mt-3"
@@ -172,7 +172,7 @@ const Index = () => {
                                         </div>
                                     </div>
 
-                                    <div className="col-12 text-right">
+                                    <div className="col-12 text-end">
                                         <PrimaryButton
                                             type="submit"
                                             className="px-4"
@@ -181,7 +181,7 @@ const Index = () => {
 
                                         <DangerButton
                                             type="button"
-                                            className="ml-2"
+                                            className="ms-2"
                                             style={{ padding: "10px 24px" }}
                                             onClick={() => setEdit(false)}
                                         >Cancel</DangerButton>

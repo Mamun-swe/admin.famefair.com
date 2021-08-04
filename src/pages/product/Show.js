@@ -111,7 +111,7 @@ const Show = () => {
                         <div className="pt-2">
                             <h6>Vendor request ( <span className="text-success">Approved</span> )</h6>
                         </div>
-                        <div className="ml-auto">
+                        <div className="ms-auto">
                             <DangerButton
                                 type="button"
                                 className="px-4"

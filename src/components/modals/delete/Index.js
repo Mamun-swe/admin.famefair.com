@@ -15,7 +15,7 @@ const Index = (props) => {
             <Modal.Header>
                 <div className="d-flex">
                     <div><h6 className="mb-0">Are tou sure?</h6></div>
-                    <div className="ml-auto">
+                    <div className="ms-auto">
                         <GrayButton
                             type="button"
                             onClick={props.onHide}

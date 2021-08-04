@@ -106,7 +106,7 @@ const ChangePassword = () => {
                             />
                         </div>
 
-                        <div className="text-right">
+                        <div className="text-end">
                             <PrimaryButton
                                 type="submit"
                                 className="px-4"

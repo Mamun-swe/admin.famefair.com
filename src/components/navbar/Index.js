@@ -12,12 +12,12 @@ const Index = (props) => {
             <div className="d-flex">
                 <div><Image src={Images.LogoSm} alt="Company logo" x={42} y={42} /></div>
                 <div><h6 className="text-capitalize mb-0">Famefair</h6></div>
-                <div className="ml-auto">
+                <div className="ms-auto">
                     <Dropdown />
                 </div>
 
                 {props.menu &&
-                    <div className="d-lg-none pl-2">
+                    <div className="d-lg-none ps-2">
                         <button
                             type="button"
                             className="btn shadow-none rounded-circle"

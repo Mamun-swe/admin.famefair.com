@@ -17,7 +17,7 @@ const Layout = (props) => {
                                 <p><span>{props.page}</span></p>
                                 <h5>{props.message}</h5>
                             </div>
-                            <div className="ml-auto text-right" style={{ minWidth: display.width > 576 ? 200 : 120 }}>
+                            <div className="ms-auto text-end" style={{ minWidth: display.width > 576 ? 200 : 120 }}>
                                 {props.button}
                             </div>
                         </div>

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import './style.scss'
 import jwtDecode from 'jwt-decode'
 import { Switch, Route } from 'react-router-dom'
-import { routes } from '../routes/Index'
+import { routes } from '../../routes/Index'
 
 import Navbar from '../../components/navbar/Index'
 import Drawer from '../../components/drawer/Index'
+
 // --- 404 ---
 import FourOFour from '../fourOfour/Index'
 

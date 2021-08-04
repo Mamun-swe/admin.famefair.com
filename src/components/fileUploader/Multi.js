@@ -43,7 +43,7 @@ export const MultiFileUploader = (props) => {
                     {/* Files preview */}
                     {selectedFiles.previews && selectedFiles.previews.length ?
                         selectedFiles.previews.map((file, i) =>
-                            <div className="preview-container text-center mr-2" key={i}>
+                            <div className="preview-container text-center me-2" key={i}>
                                 <div className="image border" style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}>
                                     <img src={file} className="img-fluid" alt="..." />
                                     {props.loading ?

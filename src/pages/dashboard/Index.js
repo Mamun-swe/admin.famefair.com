@@ -65,7 +65,7 @@ const Index = () => {
                                                 <div className="icon-container flex-center flex-coulmn">
                                                     <ShoppingBag size={20} color="#063cdd" />
                                                 </div>
-                                                <div className="pl-2">
+                                                <div className="ps-2">
                                                     <p className="text-muted mb-1">Total Sale</p>
                                                     <h6 className="mb-0">Tk. 43,567.53</h6>
                                                 </div>
@@ -78,7 +78,7 @@ const Index = () => {
                                                 <div className="icon-container flex-center flex-coulmn">
                                                     <DollarSign size={20} color="#063cdd" />
                                                 </div>
-                                                <div className="pl-2">
+                                                <div className="ps-2">
                                                     <p className="text-muted mb-1">Net Profit</p>
                                                     <h6 className="mb-0">Tk. 43,567.53</h6>
                                                 </div>
@@ -91,7 +91,7 @@ const Index = () => {
                                                 <div className="icon-container flex-center flex-coulmn">
                                                     <ShoppingCart size={20} color="#063cdd" />
                                                 </div>
-                                                <div className="pl-2">
+                                                <div className="ps-2">
                                                     <p className="text-muted mb-1">Total Order</p>
                                                     <h6 className="mb-0">43,532</h6>
                                                 </div>
@@ -104,7 +104,7 @@ const Index = () => {
                                                 <div className="icon-container flex-center flex-coulmn">
                                                     <Users size={20} color="#063cdd" />
                                                 </div>
-                                                <div className="pl-2">
+                                                <div className="ps-2">
                                                     <p className="text-muted mb-1">Customers</p>
                                                     <h6 className="mb-0">43,567</h6>
                                                 </div>
@@ -147,18 +147,18 @@ const Index = () => {
                                     <table className="table table-sm table-borderless mb-0">
                                         <thead>
                                             <tr>
-                                                <td className="pl-2 pl-lg-3">Products</td>
-                                                <td className="pl-2"></td>
+                                                <td className="ps-2 ps-lg-3">Products</td>
+                                                <td className="ps-2"></td>
                                                 <td>Sale Price</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {data.map((product, i) =>
                                                 <tr key={i}>
-                                                    <td className="pl-2 pl-lg-3" style={{ maxWidth: 50 }}>
+                                                    <td className="ps-2 ps-lg-3" style={{ maxWidth: 50 }}>
                                                         <img src={product.image} className="img-fluid" alt="..." />
                                                     </td>
-                                                    <td className="custom-td pl-2">{product.title.slice(0, 35)} ...</td>
+                                                    <td className="custom-td ps-2">{product.title.slice(0, 35)} ...</td>
                                                     <td className="custom-td" style={{ minWidth: 90 }}>Tk. {product.price}</td>
                                                 </tr>
                                             )}

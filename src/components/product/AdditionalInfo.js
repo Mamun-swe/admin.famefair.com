@@ -32,7 +32,7 @@ export const AdditionalInfo = (props) => {
                     <div className="col-12 py-3 mb-3 border-bottom">
                         <div className="d-flex">
                             <div><h6 className="mb-0 mt-2">Additional info</h6></div>
-                            <div className="ml-auto">
+                            <div className="ms-auto">
                                 <SuccessButton
                                     type="button"
                                     style={{ borderRadius: "50%", padding: "7px 8px", marginRight: 5 }}
@@ -65,7 +65,7 @@ export const AdditionalInfo = (props) => {
                                 </div>
 
                                 {/* Value */}
-                                <div className={i > 0 ? "flex-fill px-2 px-md-3" : "flex-fill pl-2 pl-md-3"}>
+                                <div className={i > 0 ? "flex-fill px-2 px-md-3" : "flex-fill pe-2 pe-md-3"}>
                                     <div className="form-group mb-4">
                                         <p>Value</p>
 

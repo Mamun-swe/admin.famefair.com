@@ -101,7 +101,7 @@ const Create = () => {
                         />
 
 
-                        <div className="text-right">
+                        <div className="text-end">
                             <PrimaryButton
                                 type="submit"
                                 disabled={isStore}

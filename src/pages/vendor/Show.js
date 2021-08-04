@@ -126,7 +126,7 @@ const Show = () => {
                                     : null}
 
                                 {/* Content container */}
-                                <div className="flex-fill content-container pl-sm-4">
+                                <div className="flex-fill content-container ps-sm-4">
                                     <table className="table-sm">
                                         <tbody>
                                             <tr>
@@ -157,7 +157,7 @@ const Show = () => {
                         <div className="card-body p-2">
 
                             {/* Bank info */}
-                            <h6 className="mb-0 pl-1">Bank info</h6>
+                            <h6 className="mb-0 ps-1">Bank info</h6>
                             <hr className="my-2" />
                             <div className="row mb-4">
                                 <div className="col-12 col-sm-6">
@@ -192,7 +192,7 @@ const Show = () => {
 
 
                             {/* Business & payment info */}
-                            <h6 className="mb-0 pl-1">Business & payment info</h6>
+                            <h6 className="mb-0 ps-1">Business & payment info</h6>
                             <hr className="my-2" />
                             <div className="row mb-4">
                                 <div className="col-12 col-sm-6">
@@ -230,7 +230,7 @@ const Show = () => {
                             {/* Contact */}
                             <div className="row mb-4">
                                 <div className="col-12 col-sm-6 mb-4 mb-sm-0">
-                                    <h6 className="mb-0 pl-1">Contact person 1</h6>
+                                    <h6 className="mb-0 ps-1">Contact person 1</h6>
                                     <hr className="my-2" />
                                     <table className="table-sm">
                                         <tbody>
@@ -251,7 +251,7 @@ const Show = () => {
                                 </div>
 
                                 <div className="col-12 col-sm-6">
-                                    <h6 className="mb-0 pl-1">Contact person 2</h6>
+                                    <h6 className="mb-0 ps-1">Contact person 2</h6>
                                     <hr className="my-2" />
                                     <table className="table-sm">
                                         <tbody>
@@ -275,21 +275,21 @@ const Show = () => {
                             {/* Management */}
                             <div className="row mb-4">
                                 <div className="col-12 col-sm-6 mb-4 mb-sm-0">
-                                    <h6 className="mb-0 pl-1">Key account manager</h6>
+                                    <h6 className="mb-0 ps-1">Key account manager</h6>
                                     <hr className="my-2" />
-                                    <p className="ml-1">{"N/A"}</p>
+                                    <p className="me-1">{"N/A"}</p>
                                 </div>
                                 <div className="col-12 col-sm-6">
-                                    <h6 className="mb-0 pl-1">Secondary key account manager</h6>
+                                    <h6 className="mb-0 ps-1">Secondary key account manager</h6>
                                     <hr className="my-2" />
-                                    <p className="ml-1">{"N/A"}</p>
+                                    <p className="me-1">{"N/A"}</p>
                                 </div>
                             </div>
 
                             {/* Products */}
                             <div className="row mb-4">
                                 <div className="col-12">
-                                    <h6 className="mb-0 pl-1">Products of {vendor.username}</h6>
+                                    <h6 className="mb-0 ps-1">Products of {vendor.username}</h6>
                                     <hr className="my-2" />
                                     <DataTable
                                         columns={columns}

@@ -28,7 +28,7 @@ export const FileUploader = (props) => {
 
                 <div className="d-flex">
                     {selectedFile ?
-                        <div className="preview-container text-center mr-2">
+                        <div className="preview-container text-center me-2">
                             <div
                                 className="image border"
                                 style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}

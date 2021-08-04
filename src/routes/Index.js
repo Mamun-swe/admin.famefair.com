@@ -18,61 +18,67 @@ import {
     UserCheck,
     UserPlus,
     Star,
+    Key,
 } from 'react-feather'
 
 // --- Dashboard ---
-import DashboardIndex from '../dashboard/Index'
+import DashboardIndex from '../pages/dashboard/Index'
 
 // --- Banner ---
-import BannerIndex from '../banner/Index'
-import BannerStore from '../banner/Create'
+import BannerIndex from '../pages/banner/Index'
+import BannerStore from '../pages/banner/Create'
 
 // --- Brand ---
-import BrandIndex from '../brand/Index'
-import BrandStore from '../brand/Create'
-import BrandEdit from '../brand/Edit'
+import BrandIndex from '../pages/brand/Index'
+import BrandStore from '../pages/brand/Create'
+import BrandEdit from '../pages/brand/Edit'
 
 // --- Vendor ---
-import VendorIndex from '../vendor/Index'
-import VendorStore from '../vendor/Create'
-import VendorEdit from '../vendor/Edit'
-import VendorShow from '../vendor/Show'
+import VendorIndex from '../pages/vendor/Index'
+import VendorStore from '../pages/vendor/Create'
+import VendorEdit from '../pages/vendor/Edit'
+import VendorShow from '../pages/vendor/Show'
 
 // --- Category ---
-import CategoryIndex from '../category/Index'
-import CategoryStore from '../category/Create'
-import CategoryEdit from '../category/Edit'
+import CategoryIndex from '../pages/category/Index'
+import CategoryStore from '../pages/category/Create'
+import CategoryEdit from '../pages/category/Edit'
 
 // --- Product ---
-import ProductIndex from '../product/Index'
-import ProductStore from '../product/Create'
-import ProductEdit from '../product/Edit'
-import ProductShow from '../product/Show'
+import ProductIndex from '../pages/product/Index'
+import ProductStore from '../pages/product/Create'
+import ProductEdit from '../pages/product/Edit'
+import ProductShow from '../pages/product/Show'
 
 // --- Order ---
-import OrderIndex from '../order/Index'
-import OrderStore from '../order/Create'
+import OrderIndex from '../pages/order/Index'
+import OrderStore from '../pages/order/Create'
 
 // --- Admin ---
-import AdminIndex from '../admin/Index'
-import AdminStore from '../admin/Create'
-import AdminEdit from '../admin/Edit'
+import AdminIndex from '../pages/admin/Index'
+import AdminStore from '../pages/admin/Create'
+import AdminEdit from '../pages/admin/Edit'
 
 // --- Customer ---
-import CustomerIndex from '../customer/Index'
-import CustomerStore from '../customer/Create'
-import CustomerShow from '../customer/Show'
-import CustomerEdit from '../customer/Edit'
+import CustomerIndex from '../pages/customer/Index'
+import CustomerStore from '../pages/customer/Create'
+import CustomerShow from '../pages/customer/Show'
+import CustomerEdit from '../pages/customer/Edit'
 
 // --- Reviews ---
-import ReviewIndex from '../reviews/Index'
+import ReviewIndex from '../pages/reviews/Index'
 
 // --- Subscriber ---
-import SubscriberIndex from '../subscriber/Index'
+import SubscriberIndex from '../pages/subscriber/Index'
 
 // --- Profile ---
-import ProfileIndex from '../profile/Index'
-import ChangePassword from '../profile/ChangePassword'
+import ProfileIndex from '../pages/profile/Index'
+import ChangePassword from '../pages/profile/ChangePassword'
+
+// --- Role ---
+import RoleIndex from '../pages/role/Index'
+import RoleStore from '../pages/role/Create'
+import RoleEdit from '../pages/role/Edit'
 
 export const routes = [
     {
@@ -113,6 +119,7 @@ export const routes = [
     {
         title: "Brand",
         name: "brand",
+        inDrawer: true,
         icon: <Gift size={18} />,
         child: [
             {
@@ -415,5 +422,40 @@ export const routes = [
                 component: ChangePassword
             }
         ]
-    }
+    },
+    {
+        title: "Role & Permissions",
+        name: "role",
+        inDrawer: true,
+        icon: <Key size={18} />,
+        child: [
+            {
+                title: "All Roles",
+                name: "role index",
+                path: "/dashboard/role",
+                exact: true,
+                inDrawer: true,
+                icon: <List size={18} />,
+                component: RoleIndex
+            },
+            {
+                title: "New Role",
+                name: "role store",
+                path: "/dashboard/role/store",
+                exact: true,
+                inDrawer: true,
+                icon: <Plus size={18} />,
+                component: RoleStore
+            },
+            {
+                title: "Edit Role",
+                name: "role edit",
+                path: "/dashboard/role/edit/:id",
+                exact: true,
+                inDrawer: false,
+                icon: null,
+                component: RoleEdit
+            }
+        ]
+    },
 ]

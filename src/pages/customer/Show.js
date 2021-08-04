@@ -154,7 +154,7 @@ const Show = () => {
                         <div className="card-body p-2">
                             <div className="row mb-4">
                                 <div className="col-12">
-                                    <h6 className="mb-0 pl-1">Orders History</h6>
+                                    <h6 className="mb-0 ps-1">Orders History</h6>
                                     <DataTable
                                         columns={columns}
                                         data={data}

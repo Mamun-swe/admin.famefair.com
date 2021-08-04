@@ -284,7 +284,7 @@ const Create = () => {
                             dataHandeller={(data) => setImages({ ...images, value: data.images || null, error: data.error || null })}
                         />
 
-                        <div className="text-right">
+                        <div className="text-end">
                             <PrimaryButton
                                 type="submit"
                                 disabled={loading}

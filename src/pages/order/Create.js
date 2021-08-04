@@ -126,7 +126,7 @@ const Index = () => {
                 {selectedItems.length ?
                     <div className="col-12 col-lg-8 col-xl-5 m-auto">
                         <div className="d-flex">
-                            <div className="flex-fill pr-2">
+                            <div className="flex-fill pe-2">
                                 <SearchableSelect
                                     isMulti={false}
                                     placeholder="Search customer"
@@ -248,7 +248,7 @@ const Index = () => {
                                 </div>
 
 
-                                <div className="col-12 text-right">
+                                <div className="col-12 text-end">
                                     <PrimaryButton
                                         type="submit"
                                         className="px-4"

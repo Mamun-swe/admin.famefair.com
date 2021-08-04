@@ -238,7 +238,7 @@ const Create = () => {
                                 </div>
                             </div>
 
-                            <div className="col-12 text-right">
+                            <div className="col-12 text-end">
                                 <PrimaryButton
                                     type="submit"
                                     className="px-4"
