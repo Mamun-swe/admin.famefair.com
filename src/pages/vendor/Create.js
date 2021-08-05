@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft } from 'react-feather'
-// import Requests from '../../utils/Requests/Index'
 import { Layout, Main } from '../../components/layout/Index'
-import { GrayButton, PrimaryButton } from '../../components/button/Index'
+import {
+    GrayButton,
+    PrimaryButton
+} from '../../components/button/Index'
+import { isValidEmail, isValidPhone } from '../../utils/_heplers'
+import Requests from '../../utils/Requests/Index'
 
 const Create = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -18,7 +22,6 @@ const Create = () => {
     // Pay system handeller
     const paySystemHandeller = event => {
         const value = event.target.value
-        console.log(value);
         setPayment(value)
         if (value === 'Cash') setPayPeriod({ value: null, error: null })
     }
@@ -32,16 +35,13 @@ const Create = () => {
 
         const vendorData = {
             ...data,
+            paymentSystem: payment,
             payPeriod: payPeriod.value ? payPeriod.value : null
         }
 
         setLoading(true)
-        console.log(vendorData)
-        console.log(header)
-
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000)
+        await Requests.Vendor.Store(vendorData, header)
+        setLoading(false)
     }
 
     return (
@@ -105,7 +105,7 @@ const Create = () => {
                                         {...register("email", {
                                             required: "E-mail is required",
                                             pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                value: isValidEmail(),
                                                 message: "Invalid email address"
                                             }
                                         })}
@@ -127,7 +127,7 @@ const Create = () => {
                                         {...register("phone", {
                                             required: "Phone number is required",
                                             pattern: {
-                                                value: /^(?:\+88|01)?\d+$/,
+                                                value: isValidPhone(),
                                                 message: "Phone number is not valid."
                                             }
                                         })}
@@ -294,10 +294,10 @@ const Create = () => {
                                             defaultValue={null}
                                         >
                                             <option value={null}>-- Select period --</option>
-                                            <option value="Every 10 days">Every 10 days</option>
-                                            <option value="Every 15 days">Every 15 days</option>
-                                            <option value="Every 20 days">Every 20 days</option>
-                                            <option value="Every 30 days">Every 30 days</option>
+                                            <option value="10 Days">Every 10 days</option>
+                                            <option value="15 Days">Every 15 days</option>
+                                            <option value="20 Days">Every 20 days</option>
+                                            <option value="30 Days">Every 30 days</option>
                                         </select>
                                     </div>
                                 </div>
@@ -340,9 +340,9 @@ const Create = () => {
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
                                         {...register("personOnePhone", {
-                                            required: "Name is required",
+                                            required: "Phone is required",
                                             pattern: {
-                                                value: /^(?:\+88|01)?\d+$/,
+                                                value: isValidPhone(),
                                                 message: "Phone number is not valid."
                                             }
                                         })}
@@ -364,7 +364,7 @@ const Create = () => {
                                         {...register("personOneEmail", {
                                             required: "E-mail is required",
                                             pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                value: isValidEmail(),
                                                 message: "Invalid email address"
                                             }
                                         })}
@@ -409,9 +409,9 @@ const Create = () => {
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
                                         {...register("personTwoPhone", {
-                                            required: "Name is required",
+                                            required: "Phone is required",
                                             pattern: {
-                                                value: /^(?:\+88|01)?\d+$/,
+                                                value: isValidPhone(),
                                                 message: "Phone number is not valid."
                                             }
                                         })}
@@ -434,7 +434,7 @@ const Create = () => {
                                         {...register("personTwoEmail", {
                                             required: "E-mail is required",
                                             pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                value: isValidEmail(),
                                                 message: "Invalid email address"
                                             }
                                         })}

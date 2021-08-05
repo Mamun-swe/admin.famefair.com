@@ -11,35 +11,20 @@ const Index = () => {
     const history = useHistory()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
-    const [searching, setSearching] = useState(false)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
-    const fetchData = useCallback(async (page) => {
+    const fetchData = useCallback(async () => {
         setLoading(true)
-        const response = await Requests.Banner.Index(page, perPage, header)
+        const response = await Requests.Category.Index(header)
 
         setData(response.data)
-        setTotalRows(response.data.length)
         setLoading(false)
-    }, [perPage, header])
-
-    const handlePageChange = page => fetchData(page)
-
-    const handlePerRowsChange = async (newPerPage, page) => {
-        setLoading(true)
-        const response = await Requests.Banner.Index(page, newPerPage, header)
-
-        setData(response.data)
-        setPerPage(newPerPage)
-        setLoading(false)
-    }
+    }, [header])
 
     useEffect(() => {
-        fetchData(1)
+        fetchData()
     }, [fetchData])
 
     const columns = [
@@ -51,13 +36,21 @@ const Index = () => {
         },
         {
             name: 'Banner',
-            grow: 0,
-            cell: row => <img height="50px" width="50px" alt={row.image} src={row.image} />,
+            grow: 1,
+            minWidth: "170px",
+            cell: row => <img height="50px" style={{ maxWidth: 150 }} alt={row.image} src={row.image} />,
         },
         {
             name: 'Name',
-            selector: row => row.category,
+            selector: row => row.name,
             sortable: true,
+            grow: 1,
+        },
+        {
+            name: 'Products',
+            selector: row => row.products,
+            sortable: true,
+            grow: 1,
         },
         {
             name: 'Action',
@@ -66,22 +59,12 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/category/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/category/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                 </div>
         },
     ]
-
-    // Handle search
-    const handleSearch = async query => {
-        setSearching(true)
-        console.log(query)
-
-        setTimeout(() => {
-            setSearching(false)
-        }, 2000);
-    }
 
     return (
         <div>
@@ -107,12 +90,6 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalRows}
-                        handlePerRowsChange={handlePerRowsChange}
-                        handlePageChange={handlePageChange}
-                        searchable
-                        search={handleSearch}
-                        searching={searching}
                     />
                 </div>
             </Main>

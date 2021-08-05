@@ -22,7 +22,7 @@ function App() {
           <Switch>
             <Route exact path="/" component={Login} />
             <Route exact path="/reset" component={Reset} />
-            <RoleBaseRoute path="/dashboard" role="admin" component={Master} />
+            <RoleBaseRoute path="/dashboard" component={Master} />
 
             <Route path="*" component={FourOFour} />
           </Switch>

@@ -27,13 +27,15 @@ export const FileUploader = (props) => {
                 {props.error ? <small className="text-danger">{props.error}</small> : <small>{props.title}</small>}
 
                 <div className="d-flex">
-                    {selectedFile ?
+
+                    {/* Selected / Default file preview */}
+                    {selectedFile || props.default ?
                         <div className="preview-container text-center me-2">
                             <div
                                 className="image border"
                                 style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}
                             >
-                                <img src={selectedFile} className="img-fluid" alt="..." />
+                                <img src={selectedFile || props.default} className="img-fluid" alt="..." />
                                 {props.loading ?
                                     <div className="thumbnail-overlay flex-center flex-column">
                                         <div className="loader"></div>
@@ -43,6 +45,7 @@ export const FileUploader = (props) => {
                         </div>
                         : null}
 
+                    {/* New file add container */}
                     <div className="add-container text-center">
                         <div
                             className="image-plus border"

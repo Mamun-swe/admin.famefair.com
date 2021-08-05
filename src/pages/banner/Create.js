@@ -10,7 +10,6 @@ import { Layout, Main } from '../../components/layout/Index'
 import { SingleSelect } from '../../components/select/Index'
 import { FileUploader } from '../../components/fileUploader/Single'
 import { Loader } from '../../components/loader/Index'
-import { OptionMaker } from '../../utils/_heplers'
 import Requests from '../../utils/Requests/Index'
 
 const Create = () => {
@@ -25,9 +24,9 @@ const Create = () => {
     // Fetch category data 
     const fetchData = useCallback(async () => {
         setLoading(true)
-        const response = await Requests.Category.Index(header)
-        const options = OptionMaker(response.data)
-        setCategory(exCategory => ({ ...exCategory, options: options }))
+        const response = await Requests.Options.Index(header)
+
+        setCategory(exCategory => ({ ...exCategory, options: response.categories }))
         setLoading(false)
     }, [header])
 
@@ -40,17 +39,15 @@ const Create = () => {
         event.preventDefault()
 
         if (!category.value) return setCategory({ ...category, error: "Category is required." })
-        if (!image.value) return setImage({ ...category, error: "Image is required." })
+        if (!image.value) return setImage({ ...image, error: "Image is required." })
 
         setStore(true)
         const formData = new FormData()
-        formData.append('category', category)
+        formData.append('category', category.value)
         formData.append('image', image.value)
 
-        setTimeout(() => {
-            console.log(formData)
-            setStore(false)
-        }, 2000);
+        await Requests.Banner.Store(formData, header)
+        setStore(false)
     }
 
     if (loading) return <Loader />
@@ -94,7 +91,7 @@ const Create = () => {
                         <FileUploader
                             width={150}
                             height={80}
-                            limit={100}
+                            limit={200}
                             title="Banner image"
                             error={image.error}
                             dataHandeller={(data) => setImage({ ...image, value: data.image || null, error: data.error || null })}

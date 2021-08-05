@@ -1,12 +1,23 @@
 import Axios from 'axios'
+// import swal from 'sweetalert'
 import { api } from '../api'
 import { errorHandeller } from './Error'
 
 // Index of items
-const Index = async (page, perPage, header) => {
+const Index = async (page, limit, header) => {
     try {
-        const response = await Axios.get(`${api}products?limit=${perPage}&per_page=${perPage}`, header)
-        if (response.status === 200) return response
+        const response = await Axios.get(`${api}product?page=${page}&limit=${limit}`, header)
+        if (response.status === 200) return response.data
+    } catch (error) {
+        if (error) return errorHandeller(error)
+    }
+}
+
+// Search item
+const Search = async (query, header) => {
+    try {
+        const response = await Axios.post(`${api}product/search`, query, header)
+        if (response.status === 200) return response.data
     } catch (error) {
         if (error) return errorHandeller(error)
     }
@@ -25,6 +36,7 @@ const SearchBySku = async (value, header) => {
 
 const Product = {
     Index,
+    Search,
     SearchBySku
 }
 

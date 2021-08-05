@@ -13,11 +13,6 @@ const Show = () => {
     const { id } = useParams()
     const [isLoading, setLoading] = useState(true)
     const [vendor, setVendor] = useState({})
-
-    const [data, setData] = useState([])
-    const [prodLoading, setProdLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
@@ -29,33 +24,10 @@ const Show = () => {
         setLoading(false)
     }, [id, header])
 
-    // Fetch products
-    const fetchProducts = useCallback(async (page) => {
-        setProdLoading(true)
-        const response = await Requests.Banner.Index(page, perPage, header)
-
-        setData(response.data)
-        setTotalRows(response.data.length)
-        setProdLoading(false)
-    }, [perPage, header])
 
     useEffect(() => {
         fetchData()
-        fetchProducts(1)
-    }, [id, header, fetchData, fetchProducts])
-
-    // Handle product page change
-    const handlePageChange = page => fetchData(page)
-
-    // Handle product row change
-    const handlePerRowsChange = async (newPerPage, page) => {
-        setLoading(true)
-        const response = await Requests.Banner.Index(page, newPerPage, header)
-
-        setData(response.data)
-        setPerPage(newPerPage)
-        setLoading(false)
-    }
+    }, [id, header, fetchData])
 
     // Data formate
     const columns = [
@@ -72,19 +44,30 @@ const Show = () => {
         },
         {
             name: 'Name',
-            selector: row => row.title,
+            selector: row => row.name,
             sortable: true
         },
         {
-            name: 'Category',
-            selector: row => row.category,
+            name: 'SKU',
+            selector: row => row.sku,
             sortable: true
         },
         {
-            name: 'Price (tk)',
-            selector: row => row.price,
+            name: 'Stock Amount',
+            selector: row => row.stockAmount,
+            sortable: true
+        },
+        {
+            name: 'Purchase Price (tk)',
+            selector: row => row.purchasePrice,
             sortable: true,
-            grow: 0
+            grow: 1
+        },
+        {
+            name: 'Sale Price (tk)',
+            selector: row => row.salePrice,
+            sortable: true,
+            grow: 1
         }
     ]
 
@@ -94,7 +77,7 @@ const Show = () => {
         <div className="vendor-show-container">
             <Layout
                 page="dashboard / vendor info"
-                message={`Information of ${vendor.username}.`}
+                message={`Information of ${vendor.name}.`}
                 container="container-fluid"
                 button={
                     <div>
@@ -112,13 +95,13 @@ const Show = () => {
 
             <Main>
                 <div className="col-12 col-padding">
-                    <div className="card border-0">
+                    <div className="card border-0 mb-4">
                         <div className="card-body p-2">
                             <div className="d-sm-flex vendor-profile-container">
                                 {/* Name circle */}
-                                {vendor.username ?
+                                {vendor.name ?
                                     <ShortName
-                                        name={vendor.username}
+                                        name={vendor.name}
                                         x={70}
                                         y={70}
                                         size={35}
@@ -131,7 +114,7 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Name</td>
-                                                <td>: {vendor.username}</td>
+                                                <td>: {vendor.name}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">E-mail</td>
@@ -143,7 +126,7 @@ const Show = () => {
                                             </tr>
                                             <tr>
                                                 <td className="title-td">Address</td>
-                                                <td>: {vendor.address.city}</td>
+                                                <td>: {vendor.address}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -152,7 +135,7 @@ const Show = () => {
                         </div>
                     </div>
 
-                    {/* Bank information */}
+                    {/* information */}
                     <div className="card border-0">
                         <div className="card-body p-2">
 
@@ -165,11 +148,11 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Account name</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.bank && vendor.bank.accountName ? vendor.bank.accountName : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">Account number</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.bank && vendor.bank.accountNumber ? vendor.bank.accountNumber : "N/A"}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -179,11 +162,11 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Branch</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.bank && vendor.bank.branchName ? vendor.bank.branchName : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">Routing number</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.bank && vendor.bank.routingNumber ? vendor.bank.routingNumber : "N/A"}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -200,11 +183,11 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Trade licence</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.tradeLicence ? vendor.tradeLicence : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">Pick Up location</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.pickupLocation ? vendor.pickupLocation : "N/A"}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -214,14 +197,12 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Payment system</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.paymentSystem ? vendor.paymentSystem : "N/A"}</td>
                                             </tr>
-                                            {vendor.payPeriod ?
-                                                <tr>
-                                                    <td className="title-td">Payment period</td>
-                                                    <td>: {vendor.payPeriod}</td>
-                                                </tr>
-                                                : null}
+                                            <tr>
+                                                <td className="title-td">Payment period</td>
+                                                <td>: {vendor.payPeriod ? vendor.payPeriod : "N/A"}</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -236,15 +217,15 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Name</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.contactPersonOne && vendor.contactPersonOne.name ? vendor.contactPersonOne.name : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">Phone</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.contactPersonOne && vendor.contactPersonOne.phone ? vendor.contactPersonOne.phone : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">E-mail</td>
-                                                <td>: <span className="text-lowercase">{"N/A"}</span></td>
+                                                <td>: <span className="text-lowercase">{vendor.contactPersonOne && vendor.contactPersonOne.email ? vendor.contactPersonOne.email : "N/A"}</span></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -257,15 +238,15 @@ const Show = () => {
                                         <tbody>
                                             <tr>
                                                 <td className="title-td">Name</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.contactPersonTwo && vendor.contactPersonTwo.name ? vendor.contactPersonTwo.name : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">Phone</td>
-                                                <td>: {"N/A"}</td>
+                                                <td>: {vendor.contactPersonTwo && vendor.contactPersonTwo.phone ? vendor.contactPersonTwo.phone : "N/A"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="title-td">E-mail</td>
-                                                <td>: <span className="text-lowercase">{"N/A"}</span></td>
+                                                <td>: <span className="text-lowercase">{vendor.contactPersonTwo && vendor.contactPersonTwo.email ? vendor.contactPersonTwo.email : "N/A"}</span></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -273,31 +254,28 @@ const Show = () => {
                             </div>
 
                             {/* Management */}
-                            <div className="row mb-4">
+                            <div className="row mb-5">
                                 <div className="col-12 col-sm-6 mb-4 mb-sm-0">
                                     <h6 className="mb-0 ps-1">Key account manager</h6>
                                     <hr className="my-2" />
-                                    <p className="me-1">{"N/A"}</p>
+                                    <p className="me-1">{vendor.keyAccountManager ? vendor.keyAccountManager : "N/A"}</p>
                                 </div>
                                 <div className="col-12 col-sm-6">
                                     <h6 className="mb-0 ps-1">Secondary key account manager</h6>
                                     <hr className="my-2" />
-                                    <p className="me-1">{"N/A"}</p>
+                                    <p className="me-1">{vendor.secondaryKeyAccountManager ? vendor.secondaryKeyAccountManager : "N/A"}</p>
                                 </div>
                             </div>
 
                             {/* Products */}
                             <div className="row mb-4">
                                 <div className="col-12">
-                                    <h6 className="mb-0 ps-1">Products of {vendor.username}</h6>
+                                    <h6 className="mb-0 ps-1">Products of {vendor.name}</h6>
                                     <hr className="my-2" />
                                     <DataTable
                                         columns={columns}
-                                        data={data}
-                                        loading={prodLoading}
-                                        totalRows={totalRows}
-                                        handlePerRowsChange={handlePerRowsChange}
-                                        handlePageChange={handlePageChange}
+                                        data={vendor.products}
+                                        loading={isLoading}
                                     />
                                 </div>
                             </div>

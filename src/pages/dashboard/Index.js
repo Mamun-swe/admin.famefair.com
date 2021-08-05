@@ -13,11 +13,10 @@ const Index = () => {
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
-    const fetchData = useCallback(async (page) => {
+    const fetchData = useCallback(async () => {
         setLoading(true)
-        const response = await Requests.Product.Index(page, 5, header)
-
-        setData(response.data)
+        const response = await Requests.Dashboard.Index(header)
+        if (response) setData(response)
         setLoading(false)
     }, [header])
 
@@ -153,13 +152,13 @@ const Index = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {data.map((product, i) =>
+                                            {data.products && data.products.map((product, i) =>
                                                 <tr key={i}>
                                                     <td className="ps-2 ps-lg-3" style={{ maxWidth: 50 }}>
-                                                        <img src={product.image} className="img-fluid" alt="..." />
+                                                        <img src={product.thumbnail} className="img-fluid" alt="..." />
                                                     </td>
-                                                    <td className="custom-td ps-2">{product.title.slice(0, 35)} ...</td>
-                                                    <td className="custom-td" style={{ minWidth: 90 }}>Tk. {product.price}</td>
+                                                    <td className="custom-td ps-2">{product.name}</td>
+                                                    <td className="custom-td" style={{ minWidth: 90 }}>Tk. {product.salePrice}</td>
                                                 </tr>
                                             )}
                                         </tbody>

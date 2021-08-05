@@ -9,6 +9,7 @@ import {
 } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
 import { FileUploader } from '../../components/fileUploader/Single'
+import Requests from '../../utils/Requests/Index'
 
 const Create = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -27,10 +28,9 @@ const Create = () => {
         formData.append('name', data.name)
         formData.append('image', image.value)
 
-        setTimeout(() => {
-            console.log(header)
-            setLoading(false)
-        }, 2000);
+        setLoading(true)
+        await Requests.Category.Store(formData, header)
+        setLoading(false)
     }
 
     return (

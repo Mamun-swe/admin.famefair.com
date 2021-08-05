@@ -1,33 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './style.scss'
-import { useForm } from 'react-hook-form'
 import { Search } from 'react-feather'
 
 const Index = (props) => {
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const [data, setData] = useState({ value: null, error: false })
 
-    const onClearSearch = event => {
-        const value = event.target.value
-        if (!value) props.clear()
+    const handleChange = event => {
+        if (event.target.value) {
+            setData({ value: event.target.value, error: false })
+        } else {
+            props.clear()
+        }
     }
 
     // Submit Form
-    const onSubmit = data => props.search(data)
+    const onSubmit = event => {
+        event.preventDefault()
+
+        if (!data.value) return setData({ ...data, error: true })
+        props.search({ query: data.value })
+    }
 
     return (
         <div className="search-component">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={onSubmit}>
                 <div className="input-container">
                     <input
                         type="text"
                         name="query"
-                        onChange={onClearSearch}
-                        {...register("query", { required: true })}
                         placeholder={`${'Search'} ${props.placeholder}`}
-                        className={errors.query ? "form-control form-control-sm shadow-none error" : "form-control form-control-sm shadow-none"}
+                        className={data.error ? "form-control form-control-sm shadow-none error" : "form-control form-control-sm shadow-none"}
+                        onChange={handleChange}
                     />
 
-                    <button type="submit" className="btn btn-sm shadow-none" disabled={props.loading}>
+                    <button
+                        type="submit"
+                        className="btn btn-sm shadow-none"
+                        disabled={props.loading}
+                    >
                         {props.loading ? <div className="btn-loader"></div> : <Search size={18} />}
                     </button>
                 </div>

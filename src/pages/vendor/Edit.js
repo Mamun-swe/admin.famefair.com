@@ -1,24 +1,49 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft } from 'react-feather'
-// import Requests from '../../utils/Requests/Index'
 import { Layout, Main } from '../../components/layout/Index'
-import { GrayButton, PrimaryButton } from '../../components/button/Index'
+import {
+    GrayButton,
+    PrimaryButton
+} from '../../components/button/Index'
+import { isValidEmail, isValidPhone } from '../../utils/_heplers'
+import { Loader } from '../../components/loader/Index'
+
+import Requests from '../../utils/Requests/Index'
 
 const Edit = () => {
+    const { id } = useParams()
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const [isLoading, setLoading] = useState(false)
+    const [isUpdate, setUpdate] = useState(false)
+    const [isLoading, setLoading] = useState(true)
+
+    const [vendor, setVendor] = useState({})
     const [payment, setPayment] = useState('Cash')
     const [payPeriod, setPayPeriod] = useState({ value: null, error: null })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
+    // Fetch data
+    const fetchData = useCallback(async () => {
+        const response = await Requests.Vendor.Show(id, header)
+        if (response) {
+            setVendor(response.data)
+            setPayment(response.data.paymentSystem)
+            setPayPeriod(exPeriod => ({ ...exPeriod, value: response.data.payPeriod }))
+        }
+        setLoading(false)
+    }, [id, header])
+
+
+    useEffect(() => {
+        fetchData()
+    }, [id, header, fetchData])
+
     // Pay system handeller
     const paySystemHandeller = event => {
         const value = event.target.value
-        console.log(value);
         setPayment(value)
         if (value === 'Cash') setPayPeriod({ value: null, error: null })
     }
@@ -32,23 +57,22 @@ const Edit = () => {
 
         const vendorData = {
             ...data,
+            paymentSystem: payment,
             payPeriod: payPeriod.value ? payPeriod.value : null
         }
 
-        setLoading(true)
-        console.log(vendorData)
-        console.log(header)
-
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000)
+        setUpdate(true)
+        await Requests.Vendor.Update(id, vendorData, header)
+        setUpdate(false)
     }
+
+    if (isLoading) return <Loader />
 
     return (
         <div>
             <Layout
                 page="dashboard / vendor edit"
-                message="Edit Test vendor."
+                message={`Edit ${vendor.name}.`}
                 container="container-fluid"
                 button={
                     <div>
@@ -80,13 +104,8 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter name"
-                                        {...register("name", {
-                                            required: "Name is required",
-                                            minLength: {
-                                                value: 5,
-                                                message: "Minimun length 5 character"
-                                            }
-                                        })}
+                                        defaultValue={vendor.name}
+                                        {...register("name", { required: "Name is required" })}
                                     />
                                 </div>
                             </div>
@@ -102,10 +121,11 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter e-mail"
+                                        defaultValue={vendor.email}
                                         {...register("email", {
                                             required: "E-mail is required",
                                             pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                value: isValidEmail(),
                                                 message: "Invalid email address"
                                             }
                                         })}
@@ -124,10 +144,11 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
+                                        defaultValue={vendor.phone}
                                         {...register("phone", {
                                             required: "Phone number is required",
                                             pattern: {
-                                                value: /^(?:\+88|01)?\d+$/,
+                                                value: isValidPhone(),
                                                 message: "Phone number is not valid."
                                             }
                                         })}
@@ -146,6 +167,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter address"
+                                        defaultValue={vendor.address}
                                         {...register("address", { required: "Address is required" })}
                                     />
                                 </div>
@@ -171,6 +193,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter account name"
+                                        defaultValue={vendor.bank && vendor.bank.accountName ? vendor.bank.accountName : null}
                                         {...register("accountName", { required: "Account name is required" })}
                                     />
                                 </div>
@@ -187,6 +210,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter account number"
+                                        defaultValue={vendor.bank && vendor.bank.accountNumber ? vendor.bank.accountNumber : null}
                                         {...register("accountNumber", { required: "Account number is required" })}
                                     />
                                 </div>
@@ -203,6 +227,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter brnach name"
+                                        defaultValue={vendor.bank && vendor.bank.branchName ? vendor.bank.branchName : null}
                                         {...register("branchName", { required: "Branch name is required" })}
                                     />
                                 </div>
@@ -219,6 +244,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter routing number"
+                                        defaultValue={vendor.bank && vendor.bank.routingNumber ? vendor.bank.routingNumber : null}
                                         {...register("routingNumber", { required: "Routing number is required" })}
                                     />
                                 </div>
@@ -244,6 +270,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter trade licence"
+                                        defaultValue={vendor.tradeLicence ? vendor.tradeLicence : null}
                                         {...register("tradeLicence", { required: "Trade licence is required" })}
                                     />
                                 </div>
@@ -260,6 +287,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter pick up location"
+                                        defaultValue={vendor.pickupLocation ? vendor.pickupLocation : null}
                                         {...register("pickupLocation", { required: "Pickup location is required" })}
                                     />
                                 </div>
@@ -273,6 +301,7 @@ const Edit = () => {
                                     <select
                                         className="form-control shadow-none"
                                         onChange={paySystemHandeller}
+                                        defaultValue={vendor.paymentSystem ? vendor.paymentSystem : null}
                                     >
                                         <option value="Cash">Cash</option>
                                         <option value="Credit">Credit</option>
@@ -291,13 +320,13 @@ const Edit = () => {
                                         <select
                                             className="form-control shadow-none"
                                             onChange={(event) => setPayPeriod({ value: event.target.value, error: null })}
-                                            defaultValue={null}
+                                            defaultValue={payPeriod.value}
                                         >
                                             <option value={null}>-- Select period --</option>
-                                            <option value="Every 10 days">Every 10 days</option>
-                                            <option value="Every 15 days">Every 15 days</option>
-                                            <option value="Every 20 days">Every 20 days</option>
-                                            <option value="Every 30 days">Every 30 days</option>
+                                            <option value="10 Days">Every 10 days</option>
+                                            <option value="15 Days">Every 15 days</option>
+                                            <option value="20 Days">Every 20 days</option>
+                                            <option value="30 Days">Every 30 days</option>
                                         </select>
                                     </div>
                                 </div>
@@ -323,6 +352,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter name"
+                                        defaultValue={vendor.contactPersonOne && vendor.contactPersonOne.name ? vendor.contactPersonOne.name : null}
                                         {...register("personOneName", { required: "Name is required" })}
                                     />
                                 </div>
@@ -339,10 +369,11 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
+                                        defaultValue={vendor.contactPersonOne && vendor.contactPersonOne.phone ? vendor.contactPersonOne.phone : null}
                                         {...register("personOnePhone", {
-                                            required: "Name is required",
+                                            required: "Phone is required",
                                             pattern: {
-                                                value: /^(?:\+88|01)?\d+$/,
+                                                value: isValidPhone(),
                                                 message: "Phone number is not valid."
                                             }
                                         })}
@@ -361,10 +392,11 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter e-mail"
+                                        defaultValue={vendor.contactPersonOne && vendor.contactPersonOne.email ? vendor.contactPersonOne.email : null}
                                         {...register("personOneEmail", {
-                                            required: "E-mail is required",
+                                            required: false,
                                             pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                value: isValidEmail(),
                                                 message: "Invalid email address"
                                             }
                                         })}
@@ -392,6 +424,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter name"
+                                        defaultValue={vendor.contactPersonTwo && vendor.contactPersonTwo.name ? vendor.contactPersonTwo.name : null}
                                         {...register("personTwoName", { required: "Name is required" })}
                                     />
                                 </div>
@@ -408,10 +441,11 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
+                                        defaultValue={vendor.contactPersonTwo && vendor.contactPersonTwo.phone ? vendor.contactPersonTwo.phone : null}
                                         {...register("personTwoPhone", {
-                                            required: "Name is required",
+                                            required: "Phone is required",
                                             pattern: {
-                                                value: /^(?:\+88|01)?\d+$/,
+                                                value: isValidPhone(),
                                                 message: "Phone number is not valid."
                                             }
                                         })}
@@ -431,10 +465,11 @@ const Edit = () => {
                                         name="personTwoEmail"
                                         className="form-control shadow-none"
                                         placeholder="Enter e-mail"
+                                        defaultValue={vendor.contactPersonTwo && vendor.contactPersonTwo.email ? vendor.contactPersonTwo.email : null}
                                         {...register("personTwoEmail", {
-                                            required: "E-mail is required",
+                                            required: false,
                                             pattern: {
-                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                value: isValidEmail(),
                                                 message: "Invalid email address"
                                             }
                                         })}
@@ -460,6 +495,7 @@ const Edit = () => {
                                     <select
                                         className="form-control shadow-none"
                                         {...register("keyAccountManager", { required: "Manager is required" })}
+                                        defaultValue={vendor.keyAccountManager}
                                     >
                                         <option value="Kaosar Ahammad Ashik">Kaosar Ahammad Ashik</option>
                                     </select>
@@ -476,6 +512,7 @@ const Edit = () => {
                                     <select
                                         className="form-control shadow-none"
                                         {...register("secondaryKeyAccountManager", { required: "Manager is required" })}
+                                        defaultValue={vendor.secondaryKeyAccountManager}
                                     >
                                         <option value="Peona Afrose">Peona Afrose</option>
                                     </select>
@@ -488,8 +525,8 @@ const Edit = () => {
                                 <PrimaryButton
                                     type="submit"
                                     className="px-4"
-                                    disabled={isLoading}
-                                >{isLoading ? 'Updating ...' : 'Update'}</PrimaryButton>
+                                    disabled={isUpdate}
+                                >{isUpdate ? 'Updating ...' : 'Update'}</PrimaryButton>
                             </div>
                         </div>
 

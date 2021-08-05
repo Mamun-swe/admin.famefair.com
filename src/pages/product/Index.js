@@ -9,10 +9,11 @@ import Requests from '../../utils/Requests/Index'
 
 const Index = () => {
     const history = useHistory()
+    const [limit, setLimit] = useState(10)
+    const [totalPage, setTotalItems] = useState(0)
+
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
     const [searching, setSearching] = useState(false)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
@@ -20,21 +21,21 @@ const Index = () => {
 
     const fetchData = useCallback(async (page) => {
         setLoading(true)
-        const response = await Requests.Product.Index(page, perPage, header)
+        const response = await Requests.Product.Index(page, limit, header)
 
         setData(response.data)
-        setTotalRows(response.data.length)
+        setTotalItems(response.pagination ? response.pagination.items : 0)
         setLoading(false)
-    }, [perPage, header])
+    }, [limit, header])
 
     const handlePageChange = page => fetchData(page)
 
-    const handlePerRowsChange = async (newPerPage, page) => {
+    const handleLimitChange = async (newLimit, page) => {
         setLoading(true)
-        const response = await Requests.Product.Index(page, newPerPage, header)
+        const response = await Requests.Product.Index(page, newLimit, header)
 
         setData(response.data)
-        setPerPage(newPerPage)
+        setLimit(newLimit)
         setLoading(false)
     }
 
@@ -52,31 +53,46 @@ const Index = () => {
         {
             name: 'Image',
             grow: 0,
-            cell: row => <img height="50px" width="50px" alt={row.image} src={row.image} />,
+            cell: row => <img height="50px" width="50px" alt={row.thumbnail} src={row.thumbnail} />,
         },
         {
             name: 'Name',
+            selector: row => row.name,
+            sortable: true,
+        },
+        {
+            name: 'Category',
             selector: row => row.category,
             sortable: true,
         },
         {
+            name: 'Brand',
+            selector: row => row.brand ? row.brand : "N/A",
+            sortable: true,
+        },
+        {
+            name: 'Vendor',
+            selector: row => row.vendor,
+            sortable: true,
+        },
+        {
             name: 'SKU',
-            selector: row => 'FF' + row.id,
+            selector: row => row.sku,
             sortable: true,
         },
         {
             name: 'Purchase Price (tk)',
-            selector: row => row.price,
+            selector: row => row.purchasePrice,
             sortable: true,
         },
         {
             name: 'Sale Price (tk)',
-            selector: row => row.price,
+            selector: row => row.salePrice,
             sortable: true,
         },
         {
             name: 'Stock Amount',
-            selector: row => row.id + 10,
+            selector: row => row.stockAmount,
             sortable: true,
         },
         {
@@ -87,12 +103,12 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/product/show/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/product/show/${row._id}`)}
                     ><Eye size={16} />
                     </SuccessButton>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/product/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/product/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                 </div>
@@ -102,11 +118,10 @@ const Index = () => {
     // Handle search
     const handleSearch = async query => {
         setSearching(true)
-        console.log(query)
 
-        setTimeout(() => {
-            setSearching(false)
-        }, 2000);
+        const response = await Requests.Product.Search(query, header)
+        setData(response.data)
+        setSearching(false)
     }
 
     return (
@@ -133,12 +148,15 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalRows}
-                        handlePerRowsChange={handlePerRowsChange}
+                        totalRows={totalPage}
+                        pagination={true}
+                        paginationServer={true}
+                        handlePerRowsChange={handleLimitChange}
                         handlePageChange={handlePageChange}
                         searchable
                         search={handleSearch}
                         searching={searching}
+                        clearSearch={() => fetchData(1)}
                     />
                 </div>
             </Main>

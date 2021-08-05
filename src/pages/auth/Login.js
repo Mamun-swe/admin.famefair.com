@@ -1,49 +1,67 @@
 import React, { useEffect, useState } from 'react'
 import './style.scss'
-import Jwt from 'jsonwebtoken'
+import jwtDecode from 'jwt-decode'
 import { useForm } from 'react-hook-form'
 import { Images } from '../../utils/Images'
 import { Link, useHistory } from 'react-router-dom'
 import { PrimaryButton } from '../../components/button/Index'
-// import Requests from '../../utils/Requests/Index'
+import { routes } from '../../routes/Index'
+import Requests from '../../utils/Requests/Index'
 
 const Login = () => {
     const history = useHistory()
     const { register, handleSubmit, formState: { errors } } = useForm()
     const [isLogging, setLogging] = useState(false)
 
+    // Handle redirect
+    const handleRedirect = token => {
+
+        let redirecPath = null
+        const decode = jwtDecode(token)
+        const permissions = decode.permissions
+
+        // Filter permitted routes from given permissions
+        if (routes && routes.length) {
+            const isAll = permissions.find(item => item === "all")
+
+            if (isAll) {
+                redirecPath = "/dashboard/"
+            } else {
+                const permittedRoutes = routes.filter(({ name: routeName }) => permissions.some(x => x === routeName))
+                const redirec = permittedRoutes[0]
+
+                if (redirec.path) {
+                    redirecPath = redirec.path
+                } else {
+                    redirecPath = redirec.child[0].path
+                }
+            }
+        }
+        return redirecPath
+    }
+
     useEffect(() => {
         const token = localStorage.getItem('token')
-        if (token) history.push('/dashboard')
+        if (token) {
+            const path = handleRedirect(token)
+            if (path) return history.push(path)
+        }
     }, [history])
 
     // Submit Form
     const onSubmit = async (data) => {
-        console.log(data)
         setLogging(true)
-
-        setTimeout(() => {
-            const token = Jwt.sign(
-                {
-                    email: data.email,
-                    role: "admin",
-                    permissions: ["all", "profile", "dashboard", "banner", "category"]
-                }, "MYSECRET", { expiresIn: '10d' }
-            )
-
-            localStorage.setItem('token', token)
+        const response = await Requests.Auth.Login(data)
+        if (response && response.token) {
             setLogging(false)
-            history.push('/dashboard')
-        }, 1500);
+            const path = handleRedirect(response.token)
 
-        // setLogging(true)
-        // const response = await Requests.Auth.Login(data)
-        // if (response) {
-        //     setLogging(false)
-        //     localStorage.setItem('token', response.token)
-        //     return history.push('/dashboard')
-        // }
-        // setLogging(false)
+            if (path) {
+                localStorage.setItem('token', response.token)
+                return history.push(path)
+            }
+        }
+        setLogging(false)
     }
 
 

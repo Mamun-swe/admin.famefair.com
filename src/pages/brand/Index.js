@@ -2,18 +2,24 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Edit2, Plus, Trash2 } from 'react-feather'
-import { GrayButton, DangerButton, SuccessButton } from '../../components/button/Index'
+import {
+    GrayButton,
+    DangerButton,
+    SuccessButton
+} from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
+
 import DataTable from '../../components/table/Index'
 import DeleteModal from '../../components/modals/delete/Index'
 import Requests from '../../utils/Requests/Index'
 
 const Index = () => {
     const history = useHistory()
+    const [limit, setLimit] = useState(10)
+    const [totalPage, setTotalItems] = useState(0)
+
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
     const [searching, setSearching] = useState(false)
     const [isDelete, setDelete] = useState({ value: null, show: false, loading: false })
     const [header] = useState({
@@ -22,21 +28,21 @@ const Index = () => {
 
     const fetchData = useCallback(async (page) => {
         setLoading(true)
-        const response = await Requests.Banner.Index(page, perPage, header)
+        const response = await Requests.Brand.Index(page, limit, header)
 
         setData(response.data)
-        setTotalRows(response.data.length)
+        setTotalItems(response.pagination ? response.pagination.items : 0)
         setLoading(false)
-    }, [perPage, header])
+    }, [limit, header])
 
     const handlePageChange = page => fetchData(page)
 
-    const handlePerRowsChange = async (newPerPage, page) => {
+    const handleLimitChange = async (newLimit, page) => {
         setLoading(true)
-        const response = await Requests.Banner.Index(page, newPerPage, header)
+        const response = await Requests.Brand.Index(page, newLimit, header)
 
         setData(response.data)
-        setPerPage(newPerPage)
+        setLimit(newLimit)
         setLoading(false)
     }
 
@@ -52,13 +58,19 @@ const Index = () => {
             grow: 0,
         },
         {
+            name: 'Name',
+            selector: row => row.name,
+            sortable: true,
+            grow: 0,
+        },
+        {
             name: 'Image',
             grow: 0,
             cell: row => <img height="50px" width="50px" alt={row.image} src={row.image} />,
         },
         {
-            name: 'Category',
-            selector: row => row.category,
+            name: 'Products',
+            selector: row => row.products,
             sortable: true,
         },
         {
@@ -69,7 +81,7 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/brand/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/brand/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                     <DangerButton
@@ -82,22 +94,21 @@ const Index = () => {
     ]
 
     // Handle delete
-    const handleDelete = async data => {
+    const handleDelete = async () => {
         setDelete({ ...isDelete, loading: true })
-        console.log(data)
-        setTimeout(() => {
-            setDelete({ ...isDelete, show: false, loading: false })
-        }, 1000)
+
+        await Requests.Brand.Delete(isDelete.value._id, header)
+        fetchData(1)
+        setDelete({ ...isDelete, show: false, loading: false })
     }
 
     // Handle search
     const handleSearch = async query => {
         setSearching(true)
-        console.log(query)
 
-        setTimeout(() => {
-            setSearching(false)
-        }, 2000);
+        const response = await Requests.Brand.Search(query, header)
+        setData(response.data)
+        setSearching(false)
     }
 
     return (
@@ -124,12 +135,15 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalRows}
-                        handlePerRowsChange={handlePerRowsChange}
+                        totalRows={totalPage}
+                        pagination={true}
+                        paginationServer={true}
+                        handlePerRowsChange={handleLimitChange}
                         handlePageChange={handlePageChange}
                         searchable
                         search={handleSearch}
                         searching={searching}
+                        clearSearch={() => fetchData(1)}
                     />
                 </div>
             </Main>
@@ -138,7 +152,12 @@ const Index = () => {
             <DeleteModal
                 show={isDelete.show}
                 loading={isDelete.loading}
-                message={<h6>Want to delete {isDelete.value ? isDelete.value.email : null} ?</h6>}
+                message={
+                    <div>
+                        <h6>Want to delete {isDelete.value ? isDelete.value.name : "this"} brand ?</h6>
+                        <img src={isDelete.value ? isDelete.value.image : null} className="img-fluid" style={{ height: 50 }} alt="Brand" />
+                    </div>
+                }
                 onHide={() => setDelete({ value: null, show: false, loading: false })}
                 doDelete={handleDelete}
             />

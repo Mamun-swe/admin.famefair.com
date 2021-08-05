@@ -2,41 +2,43 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Edit2, Eye, Plus } from 'react-feather'
-import { GrayButton, SuccessButton } from '../../components/button/Index'
+import {
+    GrayButton,
+    SuccessButton
+} from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
 import DataTable from '../../components/table/Index'
 import Requests from '../../utils/Requests/Index'
 
 const Index = () => {
     const history = useHistory()
+    const [limit, setLimit] = useState(10)
+    const [totalPage, setTotalItems] = useState(0)
+
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
     const [searching, setSearching] = useState(false)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
-    // Fetch data
     const fetchData = useCallback(async (page) => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, perPage, header)
+        const response = await Requests.Vendor.Index(page, limit, header)
 
         setData(response.data)
-        setTotalRows(response.data.length)
+        setTotalItems(response.pagination ? response.pagination.items : 0)
         setLoading(false)
-    }, [perPage, header])
+    }, [limit, header])
 
     const handlePageChange = page => fetchData(page)
 
-    // Data paginate
-    const handlePerRowsChange = async (newPerPage, page) => {
+    const handleLimitChange = async (newLimit, page) => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, newPerPage, header)
+        const response = await Requests.Vendor.Index(page, newLimit, header)
 
         setData(response.data)
-        setPerPage(newPerPage)
+        setLimit(newLimit)
         setLoading(false)
     }
 
@@ -53,8 +55,9 @@ const Index = () => {
         },
         {
             name: 'Name',
-            grow: 0,
-            selector: row => row.username,
+            grow: 1,
+            sortable: true,
+            selector: row => row.name,
         },
         {
             name: 'E-mail',
@@ -68,7 +71,7 @@ const Index = () => {
         },
         {
             name: 'Address',
-            selector: row => row.address.city,
+            selector: row => row.address,
             sortable: true,
         },
         {
@@ -79,12 +82,12 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/vendor/show/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/vendor/show/${row._id}`)}
                     ><Eye size={16} />
                     </SuccessButton>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/vendor/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/vendor/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                 </div>
@@ -94,11 +97,10 @@ const Index = () => {
     // Handle search
     const handleSearch = async query => {
         setSearching(true)
-        console.log(query)
 
-        setTimeout(() => {
-            setSearching(false)
-        }, 2000);
+        const response = await Requests.Vendor.Search(query, header)
+        setData(response.data)
+        setSearching(false)
     }
 
     return (
@@ -125,12 +127,15 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalRows}
-                        handlePerRowsChange={handlePerRowsChange}
+                        totalRows={totalPage}
+                        pagination={true}
+                        paginationServer={true}
+                        handlePerRowsChange={handleLimitChange}
                         handlePageChange={handlePageChange}
                         searchable
                         search={handleSearch}
                         searching={searching}
+                        clearSearch={() => fetchData(1)}
                     />
                 </div>
             </Main>

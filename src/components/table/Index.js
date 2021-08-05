@@ -9,8 +9,8 @@ const PaginatedTable = (props) => {
             columns={props.columns}
             data={props.data}
             progressPending={props.loading}
-            pagination
-            paginationServer
+            pagination={props.pagination}
+            paginationServer={props.paginationServer}
             paginationTotalRows={props.totalRows}
             onChangeRowsPerPage={props.handlePerRowsChange}
             onChangePage={props.handlePageChange}
@@ -20,6 +20,7 @@ const PaginatedTable = (props) => {
                     placeholder="..."
                     loading={props.searching}
                     search={query => props.search(query)}
+                    clear={() => props.clearSearch()}
                 />
             }
         />
