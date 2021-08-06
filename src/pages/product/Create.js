@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft } from 'react-feather'
@@ -13,11 +13,14 @@ import { FileUploader } from '../../components/fileUploader/Single'
 import { SingleSelect, Creatable } from '../../components/select/Index'
 import { MultiFileUploader } from '../../components/fileUploader/Multi'
 import { AdditionalInfo } from '../../components/product/AdditionalInfo'
+import { Loader } from '../../components/loader/Index'
+import Requests from '../../utils/Requests/Index'
 
 const Create = () => {
     const editor = useRef(null)
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [isCreate, setCreate] = useState(false)
     const [vendor, setVendor] = useState({ options: [], value: null, error: null })
     const [brand, setBrand] = useState({ options: [], value: null })
     const [category, setCategory] = useState({ options: [], value: null, error: null })
@@ -38,6 +41,21 @@ const Create = () => {
         }
     }
 
+    // Fetch data
+    const fetchData = useCallback(async () => {
+        const optionsRes = await Requests.Options.Index(header)
+        if (optionsRes) {
+            setCategory(exCategory => ({ ...exCategory, options: optionsRes.categories }))
+            setVendor(exVendor => ({ ...exVendor, options: optionsRes.vendors }))
+            setBrand(exBrand => ({ ...exBrand, options: optionsRes.brands }))
+        }
+        setLoading(false)
+    }, [header])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
     // Handle form submission
     const onSubmit = async data => {
 
@@ -47,7 +65,7 @@ const Create = () => {
         if (!image.value) return setImage({ ...image, error: "Product image is required." })
         if (!images.value.length) return setImages({ ...images, error: "Additional images is required." })
 
-        setLoading(true)
+        setCreate(true)
         const formData = new FormData()
         formData.append('name', data.name)
         formData.append('vendor', vendor.value)
@@ -58,18 +76,20 @@ const Create = () => {
         formData.append('stockAmount', data.stockAmount)
         formData.append('purchasePrice', data.purchasePrice)
         formData.append('salePrice', data.salePrice)
-        formData.append('additional', additional)
+        formData.append('additionalInfo', JSON.stringify(additional))
         formData.append('description', content)
         formData.append('video', data.video)
         formData.append('image', image.value)
-        formData.append('images', images.value)
+        for (const key of Object.keys(images.value)) {
+            formData.append('images', images.value[key])
+        }
 
-        setTimeout(() => {
-            console.log(header)
-            console.log(additional)
-            setLoading(false)
-        }, 2000);
+
+        await Requests.Product.Store(formData, header)
+        setCreate(false)
     }
+
+    if (loading) return <Loader />
 
     return (
         <div>
@@ -119,7 +139,7 @@ const Create = () => {
                                     <SingleSelect
                                         placeholder="vendor"
                                         error={vendor.error}
-                                        options={[]}
+                                        options={vendor.options}
                                         value={event => setVendor({ ...vendor, value: event.value, error: null })}
                                     />
                                 </div>
@@ -132,7 +152,7 @@ const Create = () => {
 
                                     <SingleSelect
                                         placeholder="brand"
-                                        options={[]}
+                                        options={brand.options}
                                         value={event => setBrand({ ...brand, value: event.value })}
                                     />
                                 </div>
@@ -148,7 +168,7 @@ const Create = () => {
                                     <SingleSelect
                                         placeholder="category"
                                         error={category.error}
-                                        options={[]}
+                                        options={category.options}
                                         value={event => setCategory({ ...category, value: event.value, error: null })}
                                     />
                                 </div>
@@ -287,10 +307,10 @@ const Create = () => {
                         <div className="text-end">
                             <PrimaryButton
                                 type="submit"
-                                disabled={loading}
+                                disabled={isCreate}
                                 className="px-4"
                             >
-                                {loading ? "Loading ..." : "Submit"}
+                                {isCreate ? "Loading ..." : "Submit"}
                             </PrimaryButton>
                         </div>
                     </form>

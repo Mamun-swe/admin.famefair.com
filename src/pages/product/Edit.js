@@ -1,8 +1,8 @@
 
-import React, { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { ChevronLeft } from 'react-feather'
+import { ChevronLeft, X } from 'react-feather'
 import JoditEditor from 'jodit-react'
 import {
     GrayButton,
@@ -15,27 +15,32 @@ import {
 import { Loader } from '../../components/loader/Index'
 import { Layout, Main } from '../../components/layout/Index'
 import { FileUploader } from '../../components/fileUploader/Single'
-import { MultiFileUploader } from '../../components/fileUploader/Multi'
 import { AdditionalInfo } from '../../components/product/AdditionalInfo'
+import Requests from '../../utils/Requests/Index'
 
 
 const Edit = () => {
+    const { id } = useParams()
     const editor = useRef(null)
     const { register, handleSubmit, formState: { errors } } = useForm()
     const [loading, setLoading] = useState(true)
     const [update, setUpdate] = useState(false)
+
+    const [data, setData] = useState(null)
     const [vendor, setVendor] = useState({ options: [], value: null, error: null })
     const [brand, setBrand] = useState({ options: [], value: null })
     const [category, setCategory] = useState({ options: [], value: null, error: null })
     const [tags, setTags] = useState({ value: [], error: null })
+
     const [additional, setAdditional] = useState(null)
     const [content, setContent] = useState('')
-    const [image, setImage] = useState({ value: null, error: null })
-    const [images, setImages] = useState({ value: [], error: null })
+    const [image, setImage] = useState({ preview: null, loading: false })
+    const [images, setImages] = useState({ previews: [], loading: false, error: null })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
+    // Text editor config
     const config = {
         readonly: false,
         minHeight: 350,
@@ -44,11 +49,29 @@ const Edit = () => {
         }
     }
 
+    // Fetch data
+    const fetchData = useCallback(async () => {
+        const response = await Requests.Product.Show(id, header)
+        const optionsRes = await Requests.Options.Index(header)
+        if (response && optionsRes) {
+            setData(response.data)
+            setImage(exImage => ({ ...exImage, preview: response.data.images.small }))
+            setImages(exImages => ({ ...exImages, previews: response.data.images.additional }))
+
+            setCategory(exCategory => ({ ...exCategory, options: optionsRes.categories, value: response.data.category._id || null }))
+            setVendor(exVendor => ({ ...exVendor, options: optionsRes.vendors, value: response.data.vendor._id || null }))
+            setBrand(exBrand => ({ ...exBrand, options: optionsRes.brands, value: response.data.brand && response.data.brand._id ? response.data.brand._id : null }))
+            setTags(exTags => ({ ...exTags, value: response.data.tags || null }))
+
+            setAdditional(response.data.additionalInfo)
+            setContent(response.data.description)
+        }
+        setLoading(false)
+    }, [id, header])
+
     useEffect(() => {
-        setTimeout(() => {
-            setLoading(false)
-        }, 1000)
-    }, [])
+        fetchData()
+    }, [fetchData])
 
     // Handle form submission
     const onSubmit = async data => {
@@ -56,31 +79,56 @@ const Edit = () => {
         if (!vendor.value) return setVendor({ ...vendor, error: "Vendor is required." })
         if (!category.value) return setCategory({ ...category, error: "Category is required." })
         if (!tags.value.length) return setTags({ ...tags, error: "Tags is required." })
-        if (!image.value) return setImage({ ...image, error: "Product image is required." })
-        if (!images.value.length) return setImages({ ...images, error: "Additional images is required." })
+
+        const formData = {
+            ...data,
+            vendor: vendor.value,
+            brand: brand.value,
+            category: category.value,
+            tags: tags.value,
+            additionalInfo: additional,
+            description: content
+        }
 
         setUpdate(true)
-        const formData = new FormData()
-        formData.append('name', data.name)
-        formData.append('vendor', vendor.value)
-        formData.append('brand', brand.value)
-        formData.append('category', category.value)
-        formData.append('tags', tags.value)
-        formData.append('sku', data.sku)
-        formData.append('stockAmount', data.stockAmount)
-        formData.append('purchasePrice', data.purchasePrice)
-        formData.append('salePrice', data.salePrice)
-        formData.append('additional', additional)
-        formData.append('description', content)
-        formData.append('video', data.video)
-        formData.append('image', image.value)
-        formData.append('images', images.value)
-
-        setTimeout(() => {
-            console.log(header)
-            setUpdate(false)
-        }, 2000);
+        await Requests.Product.Update(id, formData, header)
+        setUpdate(false)
     }
+
+    // Handle Small Image
+    const smImageHandeller = async (event) => {
+        let file = event.image
+        if (file) {
+            setImage({ preview: URL.createObjectURL(file), loading: true })
+
+            let formData = new FormData()
+            formData.append('image', file)
+
+            await Requests.Product.UpdateSMImage(id, formData, header)
+            setImage({ preview: URL.createObjectURL(file), loading: false })
+        }
+    }
+
+    // Handle to add additional images
+    const fileAdditionHandeller = async (event) => {
+        const file = event.image
+        const fileURl = URL.createObjectURL(file)
+        if (file) {
+
+            setImages(exImages => ({
+                ...exImages,
+                previews: [...exImages.previews, fileURl],
+                loading: true
+            }))
+
+            let formData = new FormData()
+            formData.append('image', file)
+
+            await Requests.Product.AddAdditional(id, formData, header)
+            setImages(exImages => ({ ...exImages, loading: false }))
+        }
+    }
+
 
     if (loading) return <Loader />
 
@@ -88,7 +136,7 @@ const Edit = () => {
         <div>
             <Layout
                 page="dashboard / product edit"
-                message="Edit test product."
+                message={`Edit ${data.name}`}
                 container="container-fluid"
                 button={
                     <div>
@@ -115,6 +163,7 @@ const Edit = () => {
                             <input
                                 type="text"
                                 placeholder="Enter product name"
+                                defaultValue={data.name || null}
                                 className={errors.name ? "form-control shadow-none error" : "form-control shadow-none"}
                                 {...register("name", { required: "Product name is required" })}
                             />
@@ -132,7 +181,8 @@ const Edit = () => {
                                     <SingleSelect
                                         placeholder="vendor"
                                         error={vendor.error}
-                                        options={[]}
+                                        options={vendor.options}
+                                        deafult={data.vendor ? { label: data.vendor.name, value: data.vendor._id } : null}
                                         value={event => setVendor({ ...vendor, value: event.value, error: null })}
                                     />
                                 </div>
@@ -145,7 +195,8 @@ const Edit = () => {
 
                                     <SingleSelect
                                         placeholder="brand"
-                                        options={[]}
+                                        options={brand.options}
+                                        deafult={data.brand ? { label: data.brand.name, value: data.brand._id } : null}
                                         value={event => setBrand({ ...brand, value: event.value })}
                                     />
                                 </div>
@@ -161,7 +212,8 @@ const Edit = () => {
                                     <SingleSelect
                                         placeholder="category"
                                         error={category.error}
-                                        options={[]}
+                                        options={category.options}
+                                        deafult={data.category ? { label: data.category.name, value: data.category._id } : null}
                                         value={event => setCategory({ ...category, value: event.value, error: null })}
                                     />
                                 </div>
@@ -177,6 +229,7 @@ const Edit = () => {
                                     <Creatable
                                         placeholder="Enter tags"
                                         error={tags.error}
+                                        deafult={data.tags ? data.tags.map(item => ({ value: item, label: item })) : null}
                                         value={event => setTags({ value: event, error: null })}
                                     />
                                 </div>
@@ -192,6 +245,7 @@ const Edit = () => {
                                     <input
                                         type="text"
                                         placeholder="Enter product SKU"
+                                        defaultValue={data.sku || null}
                                         className={errors.sku ? "form-control shadow-none error" : "form-control shadow-none"}
                                         {...register("sku", { required: "Product SKU is required" })}
                                     />
@@ -208,6 +262,7 @@ const Edit = () => {
                                     <input
                                         type="number"
                                         placeholder="Enter stock amount"
+                                        defaultValue={data.stockAmount || null}
                                         className={errors.stockAmount ? "form-control shadow-none error" : "form-control shadow-none"}
                                         {...register("stockAmount", { required: "Stock amount is required" })}
                                     />
@@ -224,6 +279,7 @@ const Edit = () => {
                                     <input
                                         type="number"
                                         placeholder="Enter stock amount"
+                                        defaultValue={data.stockAmount || null}
                                         className={errors.purchasePrice ? "form-control shadow-none error" : "form-control shadow-none"}
                                         {...register("purchasePrice", { required: "Purchase price is required" })}
                                     />
@@ -240,6 +296,7 @@ const Edit = () => {
                                     <input
                                         type="number"
                                         placeholder="Enter stock amount"
+                                        defaultValue={data.salePrice || null}
                                         className={errors.salePrice ? "form-control shadow-none error" : "form-control shadow-none"}
                                         {...register("salePrice", { required: "Sale price is required" })}
                                     />
@@ -249,7 +306,10 @@ const Edit = () => {
                         </div>
 
                         {/* Additional information */}
-                        <AdditionalInfo data={value => setAdditional(value)} />
+                        <AdditionalInfo
+                            default={data.additionalInfo && data.additionalInfo.length ? data.additionalInfo : null}
+                            data={value => setAdditional(value)}
+                        />
 
                         {/* Description */}
                         <div className="form-group mb-4">
@@ -257,7 +317,7 @@ const Edit = () => {
 
                             <JoditEditor
                                 ref={editor}
-                                value={content}
+                                value={data.description || content}
                                 config={config}
                                 tabIndex={8}
                                 onBlur={newContent => setContent(newContent)}
@@ -272,31 +332,12 @@ const Edit = () => {
                                 type="text"
                                 placeholder="Enter youtube embed link"
                                 className="form-control shadow-none"
+                                defaultValue={data.video || null}
                                 {...register("video")}
                             />
                         </div>
 
-                        {/* Single File uploader */}
-                        <FileUploader
-                            width={100}
-                            height={100}
-                            limit={100}
-                            title="Product image"
-                            error={image.error}
-                            dataHandeller={(data) => setImage({ ...image, value: data.image || null, error: data.error || null })}
-                        />
-
-                        {/* Additional images */}
-                        <MultiFileUploader
-                            width={100}
-                            height={100}
-                            limit={8192}
-                            error={images.error}
-                            title="Additional images"
-                            dataHandeller={(data) => setImages({ ...images, value: data.images || null, error: data.error || null })}
-                        />
-
-                        <div className="text-end">
+                        <div className="text-end mt-3">
                             <PrimaryButton
                                 type="submit"
                                 disabled={update}
@@ -306,6 +347,68 @@ const Edit = () => {
                             </PrimaryButton>
                         </div>
                     </form>
+
+                    {/* Single File uploader */}
+                    <FileUploader
+                        width={100}
+                        height={100}
+                        limit={100}
+                        loading={image.loading}
+                        title="Product image"
+                        error={image.error}
+                        default={image.preview}
+                        dataHandeller={smImageHandeller}
+                    />
+
+                    {/* Additional images */}
+                    <p className="mb-1 ms-1">Additional Images</p>
+                    <div className="d-flex flex-wrap">
+
+                        {images.previews && images.previews.map((item, i) =>
+                            <div
+                                className="border m-1"
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    overflow: "hidden",
+                                    position: "relative"
+                                }}
+                                key={i}
+                            >
+                                <img
+                                    src={item}
+                                    style={{ width: "100%", height: "100%" }}
+                                    alt="..."
+                                />
+
+                                {/* Remove button */}
+                                <GrayButton
+                                    style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        right: 0,
+                                        borderRadius: "50%",
+                                        padding: "5px 8px"
+                                    }}
+                                    onClick={() => console.log("log delete")}
+                                >
+                                    <X size={15} color="red" />
+                                </GrayButton>
+                            </div>
+                        )}
+
+                        {/* New file addition */}
+                        <div className="m-1" style={{ width: 100, height: 100 }}>
+                            <FileUploader
+                                width={100}
+                                height={100}
+                                limit={100}
+                                error={images.error}
+                                loading={images.loading}
+                                dataHandeller={fileAdditionHandeller}
+                            />
+                        </div>
+                    </div>
                 </div>
             </Main>
         </div>

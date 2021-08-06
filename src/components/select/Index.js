@@ -91,7 +91,7 @@ export const Creatable = (props) => {
                 classNamePrefix="custom-select"
                 placeholder={props.placeholder}
                 components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                defaultValue={props.deafult ? { ...props.deafult } : null}
+                defaultValue={props.deafult ? props.deafult : null}
             />
         </div>
     );

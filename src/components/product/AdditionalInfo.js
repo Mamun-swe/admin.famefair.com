@@ -3,7 +3,11 @@ import { Plus, X } from 'react-feather'
 import { DangerButton, SuccessButton } from '../button/Index'
 
 export const AdditionalInfo = (props) => {
-    const [field, setField] = useState([{ title: null, value: null }])
+    const [field, setField] = useState(
+        props.default ?
+            [...props.default] :
+            [{ title: null, value: null }]
+    )
 
     // Remove field
     const removeField = (index) => {
@@ -65,7 +69,7 @@ export const AdditionalInfo = (props) => {
                                 </div>
 
                                 {/* Value */}
-                                <div className={i > 0 ? "flex-fill px-2 px-md-3" : "flex-fill pe-2 pe-md-3"}>
+                                <div className={i > 0 ? "flex-fill px-2 px-md-3" : "flex-fill ps-2 pe-2 pe-md-3"}>
                                     <div className="form-group mb-4">
                                         <p>Value</p>
 

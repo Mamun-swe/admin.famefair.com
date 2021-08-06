@@ -10,7 +10,7 @@ import Requests from '../../utils/Requests/Index'
 const Index = () => {
     const history = useHistory()
     const [limit, setLimit] = useState(10)
-    const [totalPage, setTotalItems] = useState(0)
+    const [totalItems, setTotalItems] = useState(0)
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -128,7 +128,7 @@ const Index = () => {
         <div>
             <Layout
                 page="dashboard / product list"
-                message={`${data.length} products are available.`}
+                message={`${totalItems} products are available.`}
                 container="container-fluid"
                 button={
                     <div>
@@ -148,7 +148,7 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalPage}
+                        totalRows={totalItems}
                         pagination={true}
                         paginationServer={true}
                         handlePerRowsChange={handleLimitChange}

@@ -45,23 +45,33 @@ export const FileUploader = (props) => {
                         </div>
                         : null}
 
+                    {/* Loading overlay */}
+                    {props.loading &&
+                        <div className="thumbnail-overlay flex-center flex-column">
+                            <div className="loader"></div>
+                        </div>
+                    }
+
                     {/* New file add container */}
-                    <div className="add-container text-center">
-                        <div
-                            className="image-plus border"
-                            style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}
-                        >
-                            <input
-                                type="file"
-                                accept=".jpg, .png, .jpeg"
-                                className="upload"
-                                onChange={handleImage}
-                            />
-                            <div className="flex-center flex-column">
-                                <Plus size={22} />
+                    {!props.loading &&
+                        <div className="add-container text-center">
+                            <div
+                                className="image-plus border"
+                                style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}
+                            >
+                                <input
+                                    type="file"
+                                    accept=".jpg, .png, .jpeg"
+                                    className="upload"
+                                    onChange={handleImage}
+                                />
+                                <div className="flex-center flex-column">
+                                    <Plus size={22} />
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
+
                 </div>
             </div>
         </div>

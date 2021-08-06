@@ -5,8 +5,8 @@ import { Plus } from 'react-feather'
 export const MultiFileUploader = (props) => {
     const [error, setError] = useState(null)
     const [selectedFiles, setSelectedFiles] = useState({
-        values: props.deafult ? props.deafult : null,
-        previews: []
+        values: null,
+        previews: props.deafult && props.deafult.length ? [...props.deafult] : []
     })
 
     useEffect(() => {
@@ -55,23 +55,32 @@ export const MultiFileUploader = (props) => {
                             </div>
                         ) : null}
 
+                    {/* Loading overlay */}
+                    {props.loading &&
+                        <div className="thumbnail-overlay flex-center flex-column">
+                            <div className="loader"></div>
+                        </div>
+                    }
+
                     {/* Files select  */}
-                    <div className="add-container text-center">
-                        <div
-                            className="image-plus border"
-                            style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}
-                        >
-                            <input
-                                type="file"
-                                className="upload"
-                                multiple
-                                accept=".jpg, .png, .jpeg"
-                                onChange={handleImages} />
-                            <div className="flex-center flex-column">
-                                <Plus size={22} />
+                    {!props.loading &&
+                        <div className="add-container text-center">
+                            <div
+                                className="image-plus border"
+                                style={{ width: props.width ? props.width : 80, height: props.height ? props.height : 80 }}
+                            >
+                                <input
+                                    type="file"
+                                    className="upload"
+                                    multiple
+                                    accept=".jpg, .png, .jpeg"
+                                    onChange={handleImages} />
+                                <div className="flex-center flex-column">
+                                    <Plus size={22} />
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
