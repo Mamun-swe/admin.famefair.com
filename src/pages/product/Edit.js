@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import _ from 'lodash'
 import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft, X } from 'react-feather'
@@ -16,6 +17,7 @@ import { Loader } from '../../components/loader/Index'
 import { Layout, Main } from '../../components/layout/Index'
 import { FileUploader } from '../../components/fileUploader/Single'
 import { AdditionalInfo } from '../../components/product/AdditionalInfo'
+import DeleteModal from '../../components/modals/delete/Index'
 import Requests from '../../utils/Requests/Index'
 
 
@@ -36,6 +38,7 @@ const Edit = () => {
     const [content, setContent] = useState('')
     const [image, setImage] = useState({ preview: null, loading: false })
     const [images, setImages] = useState({ previews: [], loading: false, error: null })
+    const [isDelete, setDelete] = useState({ value: null, show: false, loading: false })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
@@ -127,6 +130,20 @@ const Edit = () => {
             await Requests.Product.AddAdditional(id, formData, header)
             setImages(exImages => ({ ...exImages, loading: false }))
         }
+    }
+
+    // Handle delete
+    const handleDeleteImage = async () => {
+        setDelete({ ...isDelete, loading: true })
+
+        const item = isDelete.value.split("/")
+        const file = _.last(item)
+        console.log({
+            file,
+            id
+        })
+
+        setDelete({ ...isDelete, show: false, loading: false })
     }
 
 
@@ -390,7 +407,7 @@ const Edit = () => {
                                         borderRadius: "50%",
                                         padding: "5px 8px"
                                     }}
-                                    onClick={() => console.log("log delete")}
+                                    onClick={() => setDelete({ value: item, show: true })}
                                 >
                                     <X size={15} color="red" />
                                 </GrayButton>
@@ -411,6 +428,20 @@ const Edit = () => {
                     </div>
                 </div>
             </Main>
+
+            {/* Delete confirmation modal */}
+            <DeleteModal
+                show={isDelete.show}
+                loading={isDelete.loading}
+                message={
+                    <div>
+                        <h6>Want to delete this image ?</h6>
+                        <img src={isDelete.value ? isDelete.value : null} className="img-fluid" height={150} alt="Banner" />
+                    </div>
+                }
+                onHide={() => setDelete({ value: null, show: false, loading: false })}
+                doDelete={handleDeleteImage}
+            />
         </div>
     );
 }
