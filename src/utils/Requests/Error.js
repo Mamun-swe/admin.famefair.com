@@ -1,7 +1,7 @@
 
 import swal from 'sweetalert'
 
-export const errorHandeller = error => {
+export const ErrorHandeller = error => {
     const errorResponse = error && error.response ? error.response.data : null
 
     if (errorResponse) {
@@ -30,12 +30,14 @@ export const errorHandeller = error => {
                 window.location.reload()
             }, 2000)
         } else {
-            return swal({
+            swal({
                 title: "Error Occurred!",
                 text: errorResponse.message,
                 icon: "error",
                 button: false,
             })
+
+            // window.location.replace("/501")
         }
     }
 }

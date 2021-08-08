@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import { authApi } from '../api'
-import { errorHandeller } from './Error'
+import { ErrorHandeller } from './Error'
 
 // Login
 const Login = async (data) => {
@@ -10,7 +10,7 @@ const Login = async (data) => {
             return response.data
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 

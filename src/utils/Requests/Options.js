@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import { api } from '../api'
-import { errorHandeller } from './Error'
+import { ErrorHandeller } from './Error'
 
 // Index
 const Index = async (header) => {
@@ -8,7 +8,7 @@ const Index = async (header) => {
         const response = await Axios.get(`${api}options`, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 

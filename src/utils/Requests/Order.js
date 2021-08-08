@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import { api } from '../api'
-import { errorHandeller } from './Error'
+import { ErrorHandeller } from './Error'
 
 // Index of items
 const Index = async (page, perPage, header) => {
@@ -8,7 +8,7 @@ const Index = async (page, perPage, header) => {
         const response = await Axios.get(`${api}users?limit=${perPage}&per_page=${perPage}`, header)
         if (response.status === 200) return response
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 

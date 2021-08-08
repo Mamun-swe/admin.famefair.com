@@ -9,7 +9,8 @@ import {
 import Login from './pages/auth/Login'
 import Reset from './pages/auth/Reset'
 import Master from './pages/master/Index'
-import FourOFour from './pages/fourOfour/Index'
+import FourOFour from './pages/404/Index'
+import ServerError from './pages/501/Index'
 
 import ScrollToTop from './components/scrollTop/Index'
 import RoleBaseRoute from './components/privateRoute/Index'
@@ -24,6 +25,7 @@ function App() {
             <Route exact path="/reset" component={Reset} />
             <RoleBaseRoute path="/dashboard" component={Master} />
 
+            <Route exact path="/501" component={ServerError} />
             <Route path="*" component={FourOFour} />
           </Switch>
         </ScrollToTop>

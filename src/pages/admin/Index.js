@@ -2,7 +2,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Edit2, Plus } from 'react-feather'
-import { GrayButton, SuccessButton } from '../../components/button/Index'
+import {
+    GrayButton,
+    SuccessButton
+} from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
 import DataTable from '../../components/table/Index'
 import Requests from '../../utils/Requests/Index'
@@ -11,34 +14,19 @@ const Index = () => {
     const history = useHistory()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
-    const fetchData = useCallback(async (page) => {
+    const fetchData = useCallback(async () => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, perPage, header)
-
+        const response = await Requests.Admin.Index(header)
         setData(response.data)
-        setTotalRows(response.data.length)
         setLoading(false)
-    }, [perPage, header])
-
-    const handlePageChange = page => fetchData(page)
-
-    const handlePerRowsChange = async (newPerPage, page) => {
-        setLoading(true)
-        const response = await Requests.Vendor.Index(page, newPerPage, header)
-
-        setData(response.data)
-        setPerPage(newPerPage)
-        setLoading(false)
-    }
+    }, [header])
 
     useEffect(() => {
-        fetchData(1)
+        fetchData()
     }, [fetchData])
 
     const columns = [
@@ -50,7 +38,7 @@ const Index = () => {
         },
         {
             name: 'Name',
-            selector: row => row.username,
+            selector: row => row.name,
             sortable: true,
         },
         {
@@ -60,17 +48,17 @@ const Index = () => {
         },
         {
             name: 'Role',
-            selector: row => row.phone,
+            selector: row => row.role.role,
             sortable: true,
         },
         {
             name: 'Status',
-            selector: row => row.phone,
+            selector: row => row.status,
             sortable: true,
         },
         {
             name: 'Account status',
-            selector: row => row.phone,
+            selector: row => row.accountStatus,
             sortable: true,
         },
         {
@@ -80,7 +68,7 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/admin/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/admin/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                 </div>
@@ -111,9 +99,6 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalRows}
-                        handlePerRowsChange={handlePerRowsChange}
-                        handlePageChange={handlePageChange}
                     />
                 </div>
             </Main>

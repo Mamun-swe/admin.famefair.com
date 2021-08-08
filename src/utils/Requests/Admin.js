@@ -4,9 +4,9 @@ import { api } from '../api'
 import { ErrorHandeller } from './Error'
 
 // Index of items
-const Index = async (page, limit, header) => {
+const Index = async (header) => {
     try {
-        const response = await Axios.get(`${api}vendor?page=${page}&limit=${limit}`, header)
+        const response = await Axios.get(`${api}admin`, header)
         if (response.status === 200) return response.data
     } catch (error) {
         if (error) return ErrorHandeller(error)
@@ -16,7 +16,7 @@ const Index = async (page, limit, header) => {
 // Store item
 const Store = async (data, header) => {
     try {
-        const response = await Axios.post(`${api}vendor`, data, header)
+        const response = await Axios.post(`${api}admin`, data, header)
         if (response.status === 201) {
             swal({
                 title: "Successfully!",
@@ -34,7 +34,7 @@ const Store = async (data, header) => {
 // Show specific item
 const Show = async (id, header) => {
     try {
-        const response = await Axios.get(`${api}vendor/${id}`, header)
+        const response = await Axios.get(`${api}admin/${id}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
         if (error) return ErrorHandeller(error)
@@ -44,7 +44,7 @@ const Show = async (id, header) => {
 // Update specific item
 const Update = async (id, data, header) => {
     try {
-        const response = await Axios.put(`${api}vendor/${id}`, data, header)
+        const response = await Axios.put(`${api}admin/${id}`, data, header)
         if (response.status === 201) {
             swal({
                 title: "Successfully!",
@@ -55,27 +55,19 @@ const Update = async (id, data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return ErrorHandeller(error)
-    }
-}
-
-// Search item
-const Search = async (query, header) => {
-    try {
-        const response = await Axios.post(`${api}vendor/search`, query, header)
-        if (response.status === 200) return response.data
-    } catch (error) {
-        if (error) return ErrorHandeller(error)
+        if (error) {
+            console.log(error.response)
+            return ErrorHandeller(error)
+        }
     }
 }
 
 
-const Vendor = {
+const Admin = {
     Index,
     Store,
     Show,
-    Update,
-    Search
+    Update
 }
 
-export default Vendor
+export default Admin

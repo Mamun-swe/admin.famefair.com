@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { Form } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft } from 'react-feather'
 import {
@@ -8,38 +9,73 @@ import {
     PrimaryButton
 } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
-import { isValidEmail, isValidPhone } from '../../utils/_heplers'
 import { SingleSelect } from '../../components/select/Index'
+import { Loader } from '../../components/loader/Index'
+import Requests from '../../utils/Requests/Index'
 
 const Edit = () => {
+    const { id } = useParams()
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const [isLoading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [isUpdate, setUpdate] = useState(false)
+    const [data, setData] = useState({})
     const [role, setRole] = useState({ options: [], value: null, error: null })
+    const [status, setStatus] = useState(null)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
+    const fetchData = useCallback(async () => {
+        let paths = []
+        const roles = await Requests.Acl.Role(header)
+        const response = await Requests.Admin.Show(id, header)
+
+        if (roles.data && roles.data.length) {
+            for (let i = 0; i < roles.data.length; i++) {
+                const element = roles.data[i]
+                paths.push({
+                    label: element.role,
+                    value: element._id
+                })
+            }
+        }
+
+        setData(response.data)
+        setStatus(response.data.accountStatus)
+        setRole(exRoles => ({ ...exRoles, options: paths, value: response.data.role._id }))
+
+        setLoading(false)
+    }, [id, header])
+
+    useEffect(() => {
+        fetchData()
+    }, [id, header, fetchData])
+
+    // Handle checkbox
+    const handleCheckBox = event => setStatus(event.target.value)
+
     // Submit Form
     const onSubmit = async (data) => {
-        try {
-            if (!role.value) return setRole({ ...role, error: "Role is required." })
-            setLoading(true)
-            console.log(data)
-            console.log(header)
+        if (!role.value) return setRole({ ...role, error: "Role is required." })
 
-            setTimeout(() => {
-                setLoading(false)
-            }, 2000)
-        } catch (error) {
-            if (error) console.log(error)
+        setUpdate(true)
+        const formData = {
+            ...data,
+            role: role.value,
+            accountStatus: status
         }
+
+        await Requests.Admin.Update(id, formData, header)
+        setUpdate(false)
     }
+
+    if (loading) return <Loader />
 
     return (
         <div>
             <Layout
                 page="dashboard / admin edit"
-                message="Edit Test admin."
+                message={`Edit ${data.name}.`}
                 container="container-fluid"
                 button={
                     <div>
@@ -69,6 +105,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter name"
+                                        defaultValue={data.name ? data.name : null}
                                         {...register("name", {
                                             required: "Name is required",
                                             minLength: {
@@ -83,21 +120,14 @@ const Edit = () => {
                             {/* E-mail */}
                             <div className="col-12 col-lg-6">
                                 <div className="form-group mb-4">
-                                    {errors.email && errors.email.message ?
-                                        <p className="text-danger">{errors.email && errors.email.message}</p>
-                                        : <p>E-mail</p>}
+                                    <p>E-mail</p>
 
                                     <input
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter e-mail"
-                                        {...register("email", {
-                                            required: "E-mail is required",
-                                            pattern: {
-                                                value: isValidEmail(),
-                                                message: "Invalid email address"
-                                            }
-                                        })}
+                                        defaultValue={data.email ? data.email : null}
+                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -105,21 +135,14 @@ const Edit = () => {
                             {/* Phone */}
                             <div className="col-12 col-lg-6">
                                 <div className="form-group mb-4">
-                                    {errors.phone && errors.phone.message ?
-                                        <p className="text-danger">{errors.phone && errors.phone.message}</p>
-                                        : <p>Phone</p>}
+                                    <p>Phone</p>
 
                                     <input
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
-                                        {...register("phone", {
-                                            required: "Phone number is required",
-                                            pattern: {
-                                                value: isValidPhone(),
-                                                message: "Phone number is not valid."
-                                            }
-                                        })}
+                                        defaultValue={data.phone ? data.phone : null}
+                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -135,6 +158,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter address"
+                                        defaultValue={data.address && data.address.presentAddress ? data.address.presentAddress : null}
                                         {...register("presentAddress", { required: "Present address is required" })}
                                     />
                                 </div>
@@ -151,6 +175,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter address"
+                                        defaultValue={data.address && data.address.permanentAddress ? data.address.permanentAddress : null}
                                         {...register("permanentAddress", { required: "Permanent address is required" })}
                                     />
                                 </div>
@@ -165,30 +190,34 @@ const Edit = () => {
                                         placeholder="role"
                                         error={role.error}
                                         options={role.options}
+                                        deafult={data.role ? { label: data.role.role, value: data.role.role } : null}
                                         value={event => setRole({ ...role, value: event.value, error: null })}
                                     />
                                 </div>
                             </div>
 
-                            {/* Password */}
-                            <div className="col-12">
-                                <div className="form-group mb-4">
-                                    {errors.password && errors.password.message ?
-                                        <p className="text-danger">{errors.password && errors.password.message}</p>
-                                        : <p>Password</p>}
+                            {/* Active Status */}
+                            <div className="col-12 col-lg-6">
+                                <div className="input-group mb-4 pt-4">
+                                    <Form.Group controlId="isActive">
+                                        <Form.Check
+                                            type="checkbox"
+                                            value="Active"
+                                            label="Active"
+                                            checked={status === 'Active'}
+                                            onChange={handleCheckBox}
+                                        />
+                                    </Form.Group>
 
-                                    <input
-                                        type="password"
-                                        className="form-control shadow-none"
-                                        placeholder="Enter password"
-                                        {...register("password", {
-                                            required: "Password is required",
-                                            minLength: {
-                                                value: 8,
-                                                message: "Minimun length 8 character"
-                                            }
-                                        })}
-                                    />
+                                    <Form.Group className="ms-3" controlId="isDeactive">
+                                        <Form.Check
+                                            type="checkbox"
+                                            value="Deactive"
+                                            label="Deactive"
+                                            checked={status === 'Deactive'}
+                                            onChange={handleCheckBox}
+                                        />
+                                    </Form.Group>
                                 </div>
                             </div>
 
@@ -196,8 +225,8 @@ const Edit = () => {
                                 <PrimaryButton
                                     type="submit"
                                     className="px-4"
-                                    disabled={isLoading}
-                                >{isLoading ? "Updating ..." : "Update"}</PrimaryButton>
+                                    disabled={isUpdate}
+                                >{isUpdate ? "Updating ..." : "Update"}</PrimaryButton>
                             </div>
                         </div>
                     </form>

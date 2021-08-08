@@ -138,11 +138,11 @@ const Edit = () => {
 
         const item = isDelete.value.split("/")
         const file = _.last(item)
-        console.log({
-            file,
-            id
-        })
 
+        await Requests.Product.RemoveAdditional(id, file, header)
+        const unRemovedFiles = images.previews.filter(x => x !== isDelete.value)
+
+        setImages(exImages => ({ ...exImages, previews: unRemovedFiles }))
         setDelete({ ...isDelete, show: false, loading: false })
     }
 

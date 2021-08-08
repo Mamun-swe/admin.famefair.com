@@ -4,6 +4,7 @@ import { ChevronLeft } from 'react-feather'
 import { Link, useParams } from 'react-router-dom'
 import { DangerButton, GrayButton, SuccessButton } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
+import { Gallery } from '../../components/gallery/Index'
 import { Loader } from '../../components/loader/Index'
 import Requests from '../../utils/Requests/Index'
 
@@ -20,10 +21,7 @@ const Show = () => {
     const fetchData = useCallback(async () => {
         setLoading(true)
         const response = await Requests.Product.Show(id, header)
-        if (response) {
-            console.log(response.data);
-            setData(response.data)
-        }
+        if (response) setData(response.data)
         setLoading(false)
     }, [id, header])
 
@@ -64,7 +62,7 @@ const Show = () => {
             <Main>
 
                 {/* Image gallery */}
-
+                <Gallery data={data.images} />
 
 
                 {/* Basic information */}
@@ -72,7 +70,7 @@ const Show = () => {
                     <h5><b>{data.name}</b></h5>
                     <div className="d-flex">
                         <div className="pt-2">
-                            <h6>Vendor request ( <span className="text-success">{data.vendorRequest}</span> )</h6>
+                            <h6>Vendor request ( <span className={data.vendorRequest === "Approved" ? "text-success" : "text-danger"}>{data.vendorRequest}</span> )</h6>
                         </div>
                         <div className="ms-auto">
                             {data.vendorRequest === "Approved" ?
@@ -212,7 +210,7 @@ const Show = () => {
                     <div className="col-12 col-lg-6 mb-3">
                         <h6 className="mb-3">Youtube embed video</h6>
 
-                        <div style={{ width: 'auto', height: 'auto' }}>
+                        <div style={{ width: '100%', height: '250' }}>
                             <div className="embed-responsive embed-responsive-21by9">
                                 <iframe
                                     className="embed-responsive-item"

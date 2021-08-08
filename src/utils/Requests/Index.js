@@ -4,6 +4,8 @@ import Options from './Options'
 import Dashboard from './Dashboard'
 import Banner from './Banner'
 import Brand from './Brand'
+import Admin from './Admin'
+import Acl from './Acl'
 
 import Vendor from './Vendor'
 import Category from './Category'
@@ -16,6 +18,8 @@ const Requests = {
     Dashboard,
     Banner,
     Brand,
+    Admin,
+    Acl,
 
     Vendor,
     Category,

@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import swal from 'sweetalert'
 import { api } from '../api'
-import { errorHandeller } from './Error'
+import { ErrorHandeller } from './Error'
 
 // Index of items
 const Index = async (header) => {
@@ -9,7 +9,7 @@ const Index = async (header) => {
         const response = await Axios.get(`${api}banner`, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -27,7 +27,7 @@ const Store = async (data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -45,7 +45,7 @@ const Delete = async (id, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 

@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import swal from 'sweetalert'
 import { api } from '../api'
-import { errorHandeller } from './Error'
+import { ErrorHandeller } from './Error'
 
 // Index of items
 const Index = async (page, limit, header) => {
@@ -9,7 +9,7 @@ const Index = async (page, limit, header) => {
         const response = await Axios.get(`${api}product?page=${page}&limit=${limit}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -29,7 +29,7 @@ const Store = async (data, header) => {
     } catch (error) {
         if (error) {
             console.log(error.response);
-            return errorHandeller(error)
+            return ErrorHandeller(error)
         }
     }
 }
@@ -40,7 +40,7 @@ const Show = async (id, header) => {
         const response = await Axios.get(`${api}product/${id}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -58,7 +58,7 @@ const Update = async (id, data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -76,7 +76,7 @@ const UpdateSMImage = async (id, data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -94,14 +94,32 @@ const AddAdditional = async (id, data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
+    }
+}
+
+// Remove additional image
+const RemoveAdditional = async (id, file, header) => {
+    try {
+        const response = await Axios.delete(`${api}product/additional-image/${id}/${file}`, header)
+        if (response.status === 200) {
+            swal({
+                title: "Successfully!",
+                text: response.data.message,
+                icon: "success",
+                button: false,
+            })
+            return true
+        }
+    } catch (error) {
+        if (error) return ErrorHandeller(error)
     }
 }
 
 // Change vendor request status
 const VendorRequest = async (id, header) => {
     try {
-        const response = await Axios.get(`${api}product/status/${id}`, header)
+        const response = await Axios.get(`${api}product/status/vendor/${id}`, header)
         if (response.status === 201) {
             swal({
                 title: "Successfully!",
@@ -112,7 +130,7 @@ const VendorRequest = async (id, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -122,7 +140,7 @@ const Search = async (query, header) => {
         const response = await Axios.post(`${api}product/search`, query, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -144,6 +162,7 @@ const Product = {
     Update,
     UpdateSMImage,
     AddAdditional,
+    RemoveAdditional,
     VendorRequest,
     Search,
     SearchBySku

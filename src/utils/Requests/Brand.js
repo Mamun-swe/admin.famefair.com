@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import swal from 'sweetalert'
 import { api } from '../api'
-import { errorHandeller } from './Error'
+import { ErrorHandeller } from './Error'
 
 // Index of items
 const Index = async (page, limit, header) => {
@@ -9,7 +9,7 @@ const Index = async (page, limit, header) => {
         const response = await Axios.get(`${api}brand?page=${page}&limit=${limit}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -27,7 +27,7 @@ const Store = async (data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -37,7 +37,7 @@ const Show = async (id, header) => {
         const response = await Axios.get(`${api}brand/${id}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -55,7 +55,7 @@ const Update = async (id, data, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -73,7 +73,7 @@ const Delete = async (id, header) => {
             return true
         }
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 
@@ -83,7 +83,7 @@ const Search = async (query, header) => {
         const response = await Axios.post(`${api}brand/search`, query, header)
         if (response.status === 200) return response.data
     } catch (error) {
-        if (error) return errorHandeller(error)
+        if (error) return ErrorHandeller(error)
     }
 }
 

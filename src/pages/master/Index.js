@@ -8,7 +8,7 @@ import Navbar from '../../components/navbar/Index'
 import Drawer from '../../components/drawer/Index'
 
 // --- 404 ---
-import FourOFour from '../fourOfour/Index'
+import FourOFour from '../404/Index'
 
 const Index = () => {
     const [open, setOpen] = useState(false)
