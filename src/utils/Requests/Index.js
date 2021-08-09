@@ -5,6 +5,7 @@ import Dashboard from './Dashboard'
 import Banner from './Banner'
 import Brand from './Brand'
 import Admin from './Admin'
+import Customer from './Customer'
 import Acl from './Acl'
 
 import Vendor from './Vendor'
@@ -19,6 +20,7 @@ const Requests = {
     Banner,
     Brand,
     Admin,
+    Customer,
     Acl,
 
     Vendor,

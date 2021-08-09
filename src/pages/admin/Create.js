@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft } from 'react-feather'
@@ -10,6 +10,7 @@ import {
 import { Layout, Main } from '../../components/layout/Index'
 import { isValidEmail, isValidPhone } from '../../utils/_heplers'
 import { SingleSelect } from '../../components/select/Index'
+import Requests from '../../utils/Requests/Index'
 
 const Create = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -19,20 +20,40 @@ const Create = () => {
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
+    const fetchData = useCallback(async () => {
+        let paths = []
+        const roles = await Requests.Acl.Role(header)
+
+        if (roles.data && roles.data.length) {
+            for (let i = 0; i < roles.data.length; i++) {
+                const element = roles.data[i]
+                paths.push({
+                    label: element.role,
+                    value: element._id
+                })
+            }
+        }
+
+        setRole(exRoles => ({ ...exRoles, options: paths }))
+        setLoading(false)
+    }, [header])
+
+    useEffect(() => {
+        fetchData()
+    }, [header, fetchData])
+
     // Submit Form
     const onSubmit = async (data) => {
-        try {
-            if (!role.value) return setRole({ ...role, error: "Role is required." })
-            setLoading(true)
-            console.log(data)
-            console.log(header)
+        if (!role.value) return setRole({ ...role, error: "Role is required." })
 
-            setTimeout(() => {
-                setLoading(false)
-            }, 2000)
-        } catch (error) {
-            if (error) console.log(error)
+        const formData = {
+            ...data,
+            role: role.value
         }
+
+        setLoading(true)
+        await Requests.Admin.Store(formData, header)
+        setLoading(false)
     }
 
     return (

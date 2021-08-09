@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { ChevronLeft } from 'react-feather'
 import {
@@ -9,42 +9,46 @@ import {
 } from '../../components/button/Index'
 import { Layout, Main } from '../../components/layout/Index'
 import { isValidEmail, isValidPhone } from '../../utils/_heplers'
-import { SingleSelect } from '../../components/select/Index'
-import { districts } from '../../utils/Districts'
 import { Loader } from '../../components/loader/Index'
+import { DatePicker } from '../../components/datepicker/Index'
+import Requests from '../../utils/Requests/Index'
 
 const Edit = () => {
+    const { id } = useParams()
     const { register, handleSubmit, formState: { errors } } = useForm()
     const [isLoading, setLoading] = useState(true)
     const [isUpdate, setUpdate] = useState(false)
-    const [shippingArea, setShippingArea] = useState({ options: districts, value: null, error: null })
+
+    const [data, setData] = useState(null)
+    const [dob, setDob] = useState({ value: null, error: null })
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
+    const fetchData = useCallback(async () => {
+        const response = await Requests.Customer.Show(id, header)
+        setData(response.data)
+        setDob(exDob => ({ ...exDob, value: response.data.dob }))
+        setLoading(false)
+    }, [id, header])
+
     useEffect(() => {
-        setTimeout(() => {
-            setLoading(false)
-        }, 1000)
-    }, [])
+        fetchData()
+    }, [id, header, fetchData])
 
     // Submit Form
     const onSubmit = async (data) => {
         try {
-            if (!shippingArea.value) return setShippingArea({ ...shippingArea, error: "Shipping area is required." })
+            if (!dob.value) return setDob({ ...dob, error: "D.O.B is required." })
 
             const formData = {
                 ...data,
-                shippingArea: shippingArea.value
+                dob: dob.value
             }
 
             setUpdate(true)
-            console.log(formData)
-            console.log(header)
-
-            setTimeout(() => {
-                setUpdate(false)
-            }, 2000)
+            await Requests.Customer.Update(id, formData, header)
+            setUpdate(false)
         } catch (error) {
             if (error) console.log(error)
         }
@@ -86,6 +90,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter name"
+                                        defaultValue={data ? data.name : null}
                                         {...register("name", {
                                             required: "Name is required",
                                             minLength: {
@@ -108,6 +113,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter e-mail"
+                                        defaultValue={data ? data.email : null}
                                         {...register("email", {
                                             required: "E-mail is required",
                                             pattern: {
@@ -130,6 +136,7 @@ const Edit = () => {
                                         type="text"
                                         className="form-control shadow-none"
                                         placeholder="Enter phone number"
+                                        defaultValue={data ? data.phone : null}
                                         {...register("phone", {
                                             required: "Phone number is required",
                                             pattern: {
@@ -150,6 +157,7 @@ const Edit = () => {
 
                                     <select
                                         className="form-control shadow-none"
+                                        defaultValue={data ? data.gender : null}
                                         {...register("gender", { required: "Gender is required" })}
                                     >
                                         <option value="">-- Select Gender --</option>
@@ -169,6 +177,7 @@ const Edit = () => {
 
                                     <select
                                         className="form-control shadow-none"
+                                        defaultValue={data ? data.maritalStatus : null}
                                         {...register("maritalStatus", { required: "Marital status is required" })}
                                     >
                                         <option value="">-- Select marital status --</option>
@@ -188,40 +197,9 @@ const Edit = () => {
                                         <p className="text-danger">{errors.dob && errors.dob.message}</p>
                                         : <p>Date of birth</p>}
 
-                                    <input
-                                        type="date"
-                                        className="form-control shadow-none"
-                                        {...register("dob", { required: "Date of birth is required" })}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Shipping Area */}
-                            <div className="col-12 col-lg-6">
-                                <div className="form-group mb-4">
-                                    {shippingArea.error ? <p className="text-danger">{shippingArea.error}</p> : <p>Shipping area</p>}
-
-                                    <SingleSelect
-                                        placeholder="area"
-                                        error={shippingArea.error}
-                                        options={shippingArea.options}
-                                        value={event => setShippingArea({ ...shippingArea, value: event.value, error: null })}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Delivery address */}
-                            <div className="col-12 col-lg-6">
-                                <div className="form-group mb-4">
-                                    {errors.deliveryAddress && errors.deliveryAddress.message ?
-                                        <p className="text-danger">{errors.deliveryAddress && errors.deliveryAddress.message}</p>
-                                        : <p>Delivery address</p>}
-
-                                    <input
-                                        type="text"
-                                        className="form-control shadow-none"
-                                        placeholder="Enter address"
-                                        {...register("deliveryAddress", { required: "Delivery address is required" })}
+                                    <DatePicker
+                                        default={dob.value ? dob.value : null}
+                                        value={event => setDob({ value: event, error: null })}
                                     />
                                 </div>
                             </div>

@@ -11,6 +11,7 @@ import { Layout, Main } from '../../components/layout/Index'
 import { isValidEmail, isValidPhone } from '../../utils/_heplers'
 import { SingleSelect } from '../../components/select/Index'
 import { districts } from '../../utils/Districts'
+import Requests from '../../utils/Requests/Index'
 
 const Create = () => {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -22,24 +23,16 @@ const Create = () => {
 
     // Submit Form
     const onSubmit = async (data) => {
-        try {
-            if (!shippingArea.value) return setShippingArea({ ...shippingArea, error: "Shipping area is required." })
+        if (!shippingArea.value) return setShippingArea({ ...shippingArea, error: "Shipping area is required." })
 
-            const formData = {
-                ...data,
-                shippingArea: shippingArea.value
-            }
-
-            setLoading(true)
-            console.log(formData)
-            console.log(header)
-
-            setTimeout(() => {
-                setLoading(false)
-            }, 2000)
-        } catch (error) {
-            if (error) console.log(error)
+        const formData = {
+            ...data,
+            shippingArea: shippingArea.value
         }
+
+        setLoading(true)
+        await Requests.Customer.Store(formData, header)
+        setLoading(false)
     }
 
     return (

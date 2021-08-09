@@ -4,9 +4,9 @@ import { api } from '../api'
 import { ErrorHandeller } from './Error'
 
 // Index of items
-const Index = async (header) => {
+const Index = async (page, limit, header) => {
     try {
-        const response = await Axios.get(`${api}admin`, header)
+        const response = await Axios.get(`${api}customer?page=${page}&limit=${limit}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
         if (error) return ErrorHandeller(error)
@@ -16,7 +16,7 @@ const Index = async (header) => {
 // Store item
 const Store = async (data, header) => {
     try {
-        const response = await Axios.post(`${api}admin`, data, header)
+        const response = await Axios.post(`${api}customer`, data, header)
         if (response.status === 201) {
             swal({
                 title: "Successfully!",
@@ -34,7 +34,7 @@ const Store = async (data, header) => {
 // Show specific item
 const Show = async (id, header) => {
     try {
-        const response = await Axios.get(`${api}admin/${id}`, header)
+        const response = await Axios.get(`${api}customer/${id}`, header)
         if (response.status === 200) return response.data
     } catch (error) {
         if (error) return ErrorHandeller(error)
@@ -44,7 +44,7 @@ const Show = async (id, header) => {
 // Update specific item
 const Update = async (id, data, header) => {
     try {
-        const response = await Axios.put(`${api}admin/${id}`, data, header)
+        const response = await Axios.put(`${api}customer/${id}`, data, header)
         if (response.status === 201) {
             swal({
                 title: "Successfully!",
@@ -59,12 +59,23 @@ const Update = async (id, data, header) => {
     }
 }
 
+// Search item
+const Search = async (query, header) => {
+    try {
+        const response = await Axios.post(`${api}customer/search`, query, header)
+        if (response.status === 200) return response.data
+    } catch (error) {
+        if (error) return ErrorHandeller(error)
+    }
+}
 
-const Admin = {
+
+const Customer = {
     Index,
     Store,
     Show,
-    Update
+    Update,
+    Search
 }
 
-export default Admin
+export default Customer

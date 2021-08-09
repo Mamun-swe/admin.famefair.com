@@ -20,7 +20,7 @@ const Index = () => {
 
     const fetchData = useCallback(async (page) => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, perPage, header)
+        const response = await Requests.Customer.Index(page, perPage, header)
 
         setData(response.data)
         setTotalRows(response.data.length)
@@ -31,7 +31,7 @@ const Index = () => {
 
     const handlePerRowsChange = async (newPerPage, page) => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, newPerPage, header)
+        const response = await Requests.Customer.Index(page, newPerPage, header)
 
         setData(response.data)
         setPerPage(newPerPage)
@@ -44,14 +44,8 @@ const Index = () => {
 
     const columns = [
         {
-            name: 'SL',
-            selector: row => row.id,
-            sortable: true,
-            grow: 0,
-        },
-        {
             name: 'Name',
-            selector: row => row.username,
+            selector: row => row.name,
             sortable: true,
         },
         {
@@ -66,7 +60,7 @@ const Index = () => {
         },
         {
             name: 'Gender',
-            selector: row => row.phone,
+            selector: row => row.gender,
             sortable: true,
         },
         {
@@ -77,27 +71,26 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/customer/show/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/customer/show/${row._id}`)}
                     ><Eye size={16} />
                     </SuccessButton>
 
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/customer/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/customer/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                 </div>
-        },
+        }
     ]
 
     // Handle search
     const handleSearch = async query => {
         setSearching(true)
-        console.log(query)
 
-        setTimeout(() => {
-            setSearching(false)
-        }, 2000);
+        const response = await Requests.Customer.Search(query, header)
+        setData(response.data)
+        setSearching(false)
     }
 
     return (
@@ -130,6 +123,7 @@ const Index = () => {
                         searchable
                         search={handleSearch}
                         searching={searching}
+                        clearSearch={() => fetchData(1)}
                     />
                 </div>
             </Main>
