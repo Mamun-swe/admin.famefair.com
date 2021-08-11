@@ -17,9 +17,15 @@ export const OptionMaker = data => {
 
 // Date formate
 export const DateFormate = (date) => {
-    date = new Date(date)
-    const cdate = date.toDateString()
-    return cdate
+    const givenDate = new Date(date)
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    const day = givenDate.getDate()
+    const month = months[givenDate.getMonth()]
+    const year = givenDate.getFullYear()
+    const changeDate = day + " " + month + ", " + year
+
+    return changeDate
 }
 
 // Phone number valid check

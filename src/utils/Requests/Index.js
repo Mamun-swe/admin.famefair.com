@@ -7,6 +7,7 @@ import Brand from './Brand'
 import Admin from './Admin'
 import Customer from './Customer'
 import Acl from './Acl'
+import Review from './Review'
 
 import Vendor from './Vendor'
 import Category from './Category'
@@ -22,6 +23,7 @@ const Requests = {
     Admin,
     Customer,
     Acl,
+    Review,
 
     Vendor,
     Category,

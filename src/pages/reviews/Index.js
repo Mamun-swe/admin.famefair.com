@@ -16,7 +16,7 @@ const Index = () => {
 
     const fetchData = useCallback(async (page) => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, perPage, header)
+        const response = await Requests.Review.Index(page, perPage, header)
 
         setData(response.data)
         setTotalRows(response.data.length)
@@ -27,7 +27,7 @@ const Index = () => {
 
     const handlePerRowsChange = async (newPerPage, page) => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, newPerPage, header)
+        const response = await Requests.Review.Index(page, newPerPage, header)
 
         setData(response.data)
         setPerPage(newPerPage)
@@ -40,41 +40,36 @@ const Index = () => {
 
     const columns = [
         {
-            name: 'SL',
-            selector: row => row.id,
-            sortable: true,
-            grow: 0,
-        },
-        {
             name: 'Customer',
-            selector: row => row.username
+            selector: row => row.customer ? row.customer.name : "N/A"
         },
         {
             name: '',
             grow: 0,
-            cell: row => <img height="50px" width="50px" alt={row.image} src={row.image} />
+            cell: row => <img height="50px" width="50px" alt="..." src={row.product ? row.product.thumbnail : null} />
         },
         {
             name: 'Product',
-            selector: row => row.email
+            selector: row => row.product ? row.product.name : null
         },
         {
             name: 'Rating',
-            selector: row => row.phone,
+            selector: row => row.rating,
             sortable: true
         },
         {
             name: 'Review',
-            selector: row => row.phone
+            selector: row => row.review
         },
         {
             name: 'Status',
             cell: row =>
                 <div>
-                    {row.id % 2 === 0 ?
-                        <p className="text-danger mb-0">Canceled</p>
-                        :
-                        <p className="text-success mb-0">Approved</p>
+                    {row.status === "Pending" ?
+                        <p className="text-warning mb-0">{row.status}</p>
+                        : row.status === "Canceled" ?
+                            <p className="text-danger mb-0">{row.status}</p>
+                            : <p className="text-success mb-0">{row.status}</p>
                     }
                 </div>
         },
@@ -97,7 +92,7 @@ const Index = () => {
                         >Cancel</DangerButton>
                     }
                 </div>
-        },
+        }
     ]
 
     return (
