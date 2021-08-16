@@ -11,52 +11,38 @@ const Index = () => {
     const history = useHistory()
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [totalRows, setTotalRows] = useState(0)
-    const [perPage, setPerPage] = useState(10)
     const [header] = useState({
         headers: { Authorization: "Bearer " + localStorage.getItem('token') }
     })
 
-    const fetchData = useCallback(async (page) => {
+    const fetchData = useCallback(async () => {
         setLoading(true)
-        const response = await Requests.Vendor.Index(page, perPage, header)
+        const response = await Requests.Acl.Role(header)
 
         setData(response.data)
-        setTotalRows(response.data.length)
         setLoading(false)
-    }, [perPage, header])
-
-    const handlePageChange = page => fetchData(page)
-
-    const handlePerRowsChange = async (newPerPage, page) => {
-        setLoading(true)
-        const response = await Requests.Vendor.Index(page, newPerPage, header)
-
-        setData(response.data)
-        setPerPage(newPerPage)
-        setLoading(false)
-    }
+    }, [header])
 
     useEffect(() => {
-        fetchData(1)
+        fetchData()
     }, [fetchData])
 
     const columns = [
         {
-            name: 'SL',
-            selector: row => row.id,
-            sortable: true,
-            grow: 0,
-        },
-        {
             name: 'Role',
-            selector: row => row.username,
+            selector: row => row.role,
             sortable: true,
         },
         {
             name: 'Permissions',
-            selector: row => row.email,
-            sortable: true,
+            cell: row =>
+                <div className="py-2">
+                    <ol>
+                        {row.rights && row.rights.map((item, i) =>
+                            <li className="text-capitalize mb-1" key={i}>{item}</li>
+                        )}
+                    </ol>
+                </div>
         },
         {
             name: 'Action',
@@ -65,7 +51,7 @@ const Index = () => {
                 <div>
                     <SuccessButton
                         style={{ borderRadius: "50%", padding: "6px 9px", marginRight: 5 }}
-                        onClick={() => history.push(`/dashboard/role/edit/${row.id}`)}
+                        onClick={() => history.push(`/dashboard/role/edit/${row._id}`)}
                     ><Edit2 size={16} />
                     </SuccessButton>
                 </div>
@@ -96,9 +82,6 @@ const Index = () => {
                         columns={columns}
                         data={data}
                         loading={loading}
-                        totalRows={totalRows}
-                        handlePerRowsChange={handlePerRowsChange}
-                        handlePageChange={handlePageChange}
                     />
                 </div>
             </Main>

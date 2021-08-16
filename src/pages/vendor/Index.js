@@ -48,12 +48,6 @@ const Index = () => {
 
     const columns = [
         {
-            name: 'SL',
-            selector: row => row.id,
-            sortable: true,
-            grow: 0,
-        },
-        {
             name: 'Name',
             grow: 1,
             sortable: true,

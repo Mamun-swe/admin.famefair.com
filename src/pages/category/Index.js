@@ -29,13 +29,7 @@ const Index = () => {
 
     const columns = [
         {
-            name: 'SL',
-            selector: row => row.id,
-            sortable: true,
-            grow: 0,
-        },
-        {
-            name: 'Banner',
+            name: 'Logo',
             grow: 1,
             minWidth: "170px",
             cell: row => <img height="50px" style={{ maxWidth: 150 }} alt={row.image} src={row.image} />,

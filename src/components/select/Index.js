@@ -9,7 +9,7 @@ const customStyles = {
         minHeight: 42,
         fontSize: 14,
         color: '#000',
-        background: '#e9e8e8',
+        background: '#fff',
         boxShadow: 'none', '&:hover': { borderColor: '1px solid #ced4da' },
         border: state.isFocused ? '1px solid #dfdfdf' : '1px solid #ced4da',
         borderRadius: 4

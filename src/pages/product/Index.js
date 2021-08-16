@@ -45,12 +45,6 @@ const Index = () => {
 
     const columns = [
         {
-            name: 'SL',
-            selector: row => row.id,
-            sortable: true,
-            grow: 0,
-        },
-        {
             name: 'Image',
             grow: 0,
             cell: row => <img height="50px" width="50px" alt={row.thumbnail} src={row.thumbnail} />,
